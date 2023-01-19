@@ -21,7 +21,20 @@ fn main() {
 }
 
 fn find_max_elf(input: &str) -> u32 {
-    todo!()
+    let mut max_elf = 0;
+    let mut current_elf = 0;
+    for line in input.lines() {
+        if line.is_empty() {
+            if current_elf > max_elf {
+                max_elf = current_elf;
+            }
+            current_elf = 0;
+        } else {
+            let line_elf = line.trim().parse::<u32>().expect("Unable to parse line");
+            current_elf += line_elf;
+        }
+    }
+    max_elf
 }
 
 #[cfg(not(tarpaulin_include))]
