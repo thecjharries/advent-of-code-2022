@@ -28,4 +28,27 @@ fn find_max_elf(input: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_find_max_elf() {
+        assert_eq!(
+            24000,
+            find_max_elf(
+                "1000
+        2000
+        3000
+
+        4000
+
+        5000
+        6000
+
+        7000
+        8000
+        9000
+
+        10000"
+            )
+        );
+    }
 }
