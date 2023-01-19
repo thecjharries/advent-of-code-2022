@@ -38,7 +38,27 @@ fn find_max_elf(input: &str) -> u32 {
 }
 
 fn find_max_elves(input: &str) -> u32 {
-    todo!()
+    let mut current_elf = 0;
+    let mut elves = Vec::new();
+    for line in input.lines() {
+        if line.is_empty() {
+            elves.push(current_elf);
+            current_elf = 0;
+        } else {
+            let line_elf = line.trim().parse::<u32>().expect("Unable to parse line");
+            current_elf += line_elf;
+        }
+    }
+    if current_elf > 0 {
+        elves.push(current_elf);
+    }
+    elves.sort();
+    elves.reverse();
+    let mut max_elf_sum: u32 = 0;
+    for elf in &elves[0..3] {
+        max_elf_sum += *elf;
+    }
+    max_elf_sum
 }
 
 #[cfg(not(tarpaulin_include))]
