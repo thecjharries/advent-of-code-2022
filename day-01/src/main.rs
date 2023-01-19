@@ -68,4 +68,27 @@ mod tests {
             )
         );
     }
+
+    #[test]
+    fn test_find_max_elves() {
+        assert_eq!(
+            45000,
+            find_max_elves(
+                "1000
+        2000
+        3000
+
+        4000
+
+        5000
+        6000
+
+        7000
+        8000
+        9000
+
+        10000"
+            )
+        );
+    }
 }
