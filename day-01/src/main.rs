@@ -20,6 +20,10 @@ fn main() {
     println!("{}", input);
 }
 
+fn find_max_elf(input: &str) -> u32 {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
