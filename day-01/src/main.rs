@@ -34,6 +34,9 @@ fn find_max_elf(input: &str) -> u32 {
             current_elf += line_elf;
         }
     }
+    if current_elf > max_elf {
+        max_elf = current_elf;
+    }
     max_elf
 }
 
