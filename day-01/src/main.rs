@@ -17,7 +17,8 @@ use std::fs::read_to_string;
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input-1.txt").expect("Unable to read input file");
-    println!("{}", find_max_elf(input.as_str()));
+    println!("Max single elf: {}", find_max_elf(input.as_str()));
+    println!("Max three elves: {}", find_max_elves(input.as_str()));
 }
 
 fn find_max_elf(input: &str) -> u32 {
