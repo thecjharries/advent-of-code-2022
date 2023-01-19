@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::fs::read_to_string;
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
-    println!("Hello, world!");
+    let input = read_to_string("input-1.txt").expect("Unable to read input file");
+    println!("{}", input);
 }
 
 #[cfg(not(tarpaulin_include))]
