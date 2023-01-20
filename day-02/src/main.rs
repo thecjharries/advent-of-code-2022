@@ -128,4 +128,16 @@ mod tests {
             )
         );
     }
+
+    #[test]
+    fn test_compute_choosing_score() {
+        assert_eq!(
+            12,
+            compute_choosing_score(
+                "A Y
+                B X
+                C Z"
+            )
+        );
+    }
 }
