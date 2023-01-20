@@ -63,7 +63,18 @@ fn main() {
 }
 
 fn compute_score(input: &str) -> u32 {
-    todo!()
+    let mut score = 0;
+    for line in input.lines() {
+        let mut choices = line.trim().split(" ");
+        let player_one_choice = choices.next().unwrap().chars().next().unwrap();
+        let player_two_choice = choices.next().unwrap().chars().next().unwrap();
+        score += SCORING_MAP
+            .get(&player_one_choice)
+            .unwrap()
+            .get(&player_two_choice)
+            .unwrap();
+    }
+    score
 }
 
 #[cfg(not(tarpaulin_include))]
