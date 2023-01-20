@@ -94,6 +94,7 @@ lazy_static! {
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", compute_score(&input));
+    println!("Part 2: {}", compute_choosing_score(&input));
 }
 
 fn compute_score(input: &str) -> u32 {
