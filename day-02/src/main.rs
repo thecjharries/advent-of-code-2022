@@ -62,6 +62,10 @@ fn main() {
     println!("{}", input);
 }
 
+fn compute_score(input: &str) -> u32 {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
