@@ -14,6 +14,18 @@
 
 use std::fs::read_to_string;
 
+enum ChoiceScore {
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3,
+}
+
+enum ResultScore {
+    Loss = 0,
+    Draw = 3,
+    Win = 6,
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
