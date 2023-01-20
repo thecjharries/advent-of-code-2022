@@ -28,10 +28,10 @@ enum ResultScore {
     Win = 6,
 }
 
-// A,X = Rock
-// B,Y = Paper
-// C,Z = Scissors
 lazy_static! {
+    // A,X = Rock
+    // B,Y = Paper
+    // C,Z = Scissors
     static ref SCORING_MAP: HashMap<char, HashMap<char, u32>> = {
         let mut map = HashMap::new();
         map.insert('A', {
@@ -57,6 +57,38 @@ lazy_static! {
         });
         map
     };
+    // A = Rock
+    // B = Paper
+    // C = Scissors
+    // X = Loss
+    // Y = Draw
+    // Z = Win
+    static ref CHOICE_MAP: HashMap<char, HashMap<char, u32>> = {
+        let mut map = HashMap::new();
+        map.insert('A', {
+            let mut inner_map = HashMap::new();
+            inner_map.insert('X', ResultScore::Loss as u32 + ChoiceScore::Scissors as u32);
+            inner_map.insert('Y', ResultScore::Draw as u32 + ChoiceScore::Rock as u32);
+            inner_map.insert('Z', ResultScore::Win as u32 + ChoiceScore::Paper as u32);
+            inner_map
+        });
+        map.insert('B', {
+            let mut inner_map = HashMap::new();
+            inner_map.insert('X', ResultScore::Loss as u32 + ChoiceScore::Rock as u32);
+            inner_map.insert('Y', ResultScore::Draw as u32 + ChoiceScore::Paper as u32);
+            inner_map.insert('Z', ResultScore::Win as u32 + ChoiceScore::Scissors as u32);
+            inner_map
+        });
+        map.insert('C', {
+            let mut inner_map = HashMap::new();
+            inner_map.insert('X', ResultScore::Loss as u32 + ChoiceScore::Paper as u32);
+            inner_map.insert('Y', ResultScore::Draw as u32 + ChoiceScore::Scissors as u32);
+            inner_map.insert('Z', ResultScore::Win as u32 + ChoiceScore::Rock as u32);
+            inner_map
+        });
+        map
+    };
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
