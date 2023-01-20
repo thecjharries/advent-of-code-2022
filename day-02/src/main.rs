@@ -70,4 +70,16 @@ fn compute_score(input: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_compute_score() {
+        assert_eq!(
+            15,
+            compute_score(
+                "A Y
+                B X
+                C Z"
+            )
+        );
+    }
 }
