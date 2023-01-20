@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use lazy_static::lazy_static;
+use std::collections::HashMap;
 use std::fs::read_to_string;
 
 enum ChoiceScore {
@@ -24,6 +26,34 @@ enum ResultScore {
     Loss = 0,
     Draw = 3,
     Win = 6,
+}
+
+lazy_static! {
+    static ref SCORING_MAP: HashMap<char, HashMap<char, u32>> = {
+        let mut map = HashMap::new();
+        map.insert('A', {
+            let mut inner_map = HashMap::new();
+            inner_map.insert('X', ResultScore::Draw as u32 + ChoiceScore::Rock as u32);
+            inner_map.insert('Y', ResultScore::Loss as u32 + ChoiceScore::Paper as u32);
+            inner_map.insert('Z', ResultScore::Win as u32 + ChoiceScore::Scissors as u32);
+            inner_map
+        });
+        map.insert('B', {
+            let mut inner_map = HashMap::new();
+            inner_map.insert('X', ResultScore::Win as u32 + ChoiceScore::Rock as u32);
+            inner_map.insert('Y', ResultScore::Draw as u32 + ChoiceScore::Paper as u32);
+            inner_map.insert('Z', ResultScore::Loss as u32 + ChoiceScore::Scissors as u32);
+            inner_map
+        });
+        map.insert('C', {
+            let mut inner_map = HashMap::new();
+            inner_map.insert('X', ResultScore::Loss as u32 + ChoiceScore::Rock as u32);
+            inner_map.insert('Y', ResultScore::Win as u32 + ChoiceScore::Paper as u32);
+            inner_map.insert('Z', ResultScore::Draw as u32 + ChoiceScore::Scissors as u32);
+            inner_map
+        });
+        map
+    };
 }
 
 #[cfg(not(tarpaulin_include))]
