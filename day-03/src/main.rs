@@ -86,4 +86,21 @@ mod tests {
             )
         );
     }
+
+    #[test]
+    fn test_sum_grouped_priority() {
+        assert_eq!(
+            70,
+            sum_grouped_priority(
+                "vJrwpWtwJgWrhcsFMMfFFhFp
+                jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+                PmmdzqPrVvPwwTWBwg
+                wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+                ttgJtRGJQctTZtZT
+                CrZsJsPPZsGzwwsLwLmpwMDw
+
+                "
+            )
+        );
+    }
 }
