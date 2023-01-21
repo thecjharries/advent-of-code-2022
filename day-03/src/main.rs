@@ -48,4 +48,19 @@ mod tests {
         assert_eq!(27, compute_priority(vec!['A']));
         assert_eq!(55, compute_priority(vec!['A', 'B']));
     }
+
+    #[test]
+    fn test_sum_shared_priority() {
+        assert_eq!(
+            157,
+            sum_shared_priority(
+                "vJrwpWtwJgWrhcsFMMfFFhFp
+                jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+                PmmdzqPrVvPwwTWBwg
+                wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+                ttgJtRGJQctTZtZT
+                CrZsJsPPZsGzwwsLwLmpwMDw"
+            )
+        );
+    }
 }
