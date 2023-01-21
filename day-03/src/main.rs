@@ -32,6 +32,10 @@ fn compute_priority(available: Vec<char>) -> u32 {
     priority
 }
 
+fn sum_shared_priority(input: &str) -> u32 {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
