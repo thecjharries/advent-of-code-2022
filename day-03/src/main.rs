@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashSet;
 use std::fs::read_to_string;
 
 #[cfg(not(tarpaulin_include))]
@@ -33,7 +34,23 @@ fn compute_priority(available: Vec<char>) -> u32 {
 }
 
 fn sum_shared_priority(input: &str) -> u32 {
-    todo!()
+    let mut sum = 0;
+    for line in input.lines() {
+        if line.is_empty() {
+            continue;
+        }
+        let mut first: HashSet<char> = HashSet::new();
+        let mut second: HashSet<char> = HashSet::new();
+        let line = line.trim();
+        for index in 0..line.len() / 2 {
+            first.insert(line.chars().nth(index).unwrap());
+            second.insert(line.chars().nth(line.len() - index - 1).unwrap());
+        }
+        let mut raw_intersection: Vec<&char> = first.intersection(&second).collect();
+        let intersection: Vec<char> = raw_intersection.drain(..).map(|&x| x).collect();
+        sum += compute_priority(intersection);
+    }
+    sum
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -59,7 +76,9 @@ mod tests {
                 PmmdzqPrVvPwwTWBwg
                 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
                 ttgJtRGJQctTZtZT
-                CrZsJsPPZsGzwwsLwLmpwMDw"
+                CrZsJsPPZsGzwwsLwLmpwMDw
+
+                "
             )
         );
     }
