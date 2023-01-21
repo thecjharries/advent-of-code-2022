@@ -21,7 +21,15 @@ fn main() {
 }
 
 fn compute_priority(available: Vec<char>) -> u32 {
-    todo!()
+    let mut priority = 0;
+    for character in available {
+        if character.is_uppercase() {
+            priority += (character as u8 - 'A' as u8 + 27) as u32;
+        } else {
+            priority += (character as u8 - 'a' as u8 + 1) as u32;
+        }
+    }
+    priority
 }
 
 #[cfg(not(tarpaulin_include))]
