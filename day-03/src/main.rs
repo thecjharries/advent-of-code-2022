@@ -19,6 +19,7 @@ use std::fs::read_to_string;
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", sum_shared_priority(&input));
+    println!("Part 2: {}", sum_grouped_priority(&input));
 }
 
 fn compute_priority(available: Vec<char>) -> u32 {
