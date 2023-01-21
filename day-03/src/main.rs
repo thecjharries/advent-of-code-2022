@@ -54,7 +54,29 @@ fn sum_shared_priority(input: &str) -> u32 {
 }
 
 fn sum_grouped_priority(input: &str) -> u32 {
-    todo!()
+    let mut sum = 0;
+    let lines = input.trim().lines().collect::<Vec<&str>>();
+    for index in (0..lines.len()).step_by(3) {
+        let mut first: HashSet<char> = HashSet::new();
+        let mut second: HashSet<char> = HashSet::new();
+        let mut third: HashSet<char> = HashSet::new();
+        for character in lines[index].trim().chars() {
+            first.insert(character);
+        }
+        for character in lines[index + 1].trim().chars() {
+            second.insert(character);
+        }
+        for character in lines[index + 2].trim().chars() {
+            third.insert(character);
+        }
+        let first_intersection: HashSet<char> = first.intersection(&second).map(|&x| x).collect();
+        let intersection: Vec<char> = first_intersection
+            .intersection(&third)
+            .map(|&x| x)
+            .collect();
+        sum += compute_priority(intersection);
+    }
+    sum
 }
 
 #[cfg(not(tarpaulin_include))]
