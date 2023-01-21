@@ -18,7 +18,7 @@ use std::fs::read_to_string;
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("{}", input);
+    println!("Part 1: {}", sum_shared_priority(&input));
 }
 
 fn compute_priority(available: Vec<char>) -> u32 {
@@ -51,6 +51,10 @@ fn sum_shared_priority(input: &str) -> u32 {
         sum += compute_priority(intersection);
     }
     sum
+}
+
+fn sum_grouped_priority(input: &str) -> u32 {
+    todo!()
 }
 
 #[cfg(not(tarpaulin_include))]
