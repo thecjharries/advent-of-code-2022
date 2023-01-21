@@ -20,6 +20,10 @@ fn main() {
     println!("{}", input);
 }
 
+fn find_priority(char: char) -> u8 {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
