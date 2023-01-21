@@ -20,7 +20,7 @@ fn main() {
     println!("{}", input);
 }
 
-fn find_priority(char: char) -> u8 {
+fn compute_priority(available: Vec<char>) -> u32 {
     todo!()
 }
 
@@ -28,4 +28,12 @@ fn find_priority(char: char) -> u8 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_compute_priority() {
+        assert_eq!(1, compute_priority(vec!['a']));
+        assert_eq!(3, compute_priority(vec!['a', 'b']));
+        assert_eq!(27, compute_priority(vec!['A']));
+        assert_eq!(55, compute_priority(vec!['A', 'B']));
+    }
 }
