@@ -21,6 +21,6 @@ new:
 	rm -rf day-$(DAY)/src/main.rs
 	cp ./boilerplate.rs day-$(DAY)/src/main.rs
 	curl --silent --cookie "$$SESSION_COOKIE" --output day-$(DAY)/input.txt https://adventofcode.com/$(YEAR)/day/$(NONZERO_DAY)/input
-	cd day-$(DAY) && cargo run || exit 0
+	cd day-$(DAY) && cargo run >/dev/null 2>&1 || exit 0
 	git add .
 	git commit -am 'Add day $(DAY) boilerplate'
