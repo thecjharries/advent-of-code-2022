@@ -20,7 +20,7 @@ use std::fs::read_to_string;
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", count_overlaps(&input));
-    // println!("Part 2: {}", input);
+    println!("Part 2: {}", count_intersections(&input));
 }
 
 fn count_overlaps(input: &str) -> u32 {
@@ -41,7 +41,7 @@ fn count_overlaps(input: &str) -> u32 {
     count
 }
 
-fn count_intersection(input: &str) -> u32 {
+fn count_intersections(input: &str) -> u32 {
     let mut count: u32 = 0;
     for line in input.trim().lines() {
         let line = line.trim();
@@ -84,7 +84,7 @@ mod tests {
     fn test_count_intersections() {
         assert_eq!(
             4,
-            count_intersection(
+            count_intersections(
                 "2-4,6-8
                 2-3,4-5
                 5-7,7-9
