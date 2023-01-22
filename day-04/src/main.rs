@@ -42,7 +42,21 @@ fn count_overlaps(input: &str) -> u32 {
 }
 
 fn count_intersection(input: &str) -> u32 {
-    todo!()
+    let mut count: u32 = 0;
+    for line in input.trim().lines() {
+        let line = line.trim();
+        let groups: Vec<&str> = line.split(",").collect();
+        let first_group = groups[0].split("-").collect::<Vec<&str>>();
+        let first: HashSet<u32> =
+            (first_group[0].parse().unwrap()..=first_group[1].parse().unwrap()).collect();
+        let second_group = groups[1].split("-").collect::<Vec<&str>>();
+        let second: HashSet<u32> =
+            (second_group[0].parse().unwrap()..=second_group[1].parse().unwrap()).collect();
+        if 0 < first.intersection(&second).count() {
+            count += 1;
+        }
+    }
+    count
 }
 
 #[cfg(not(tarpaulin_include))]
