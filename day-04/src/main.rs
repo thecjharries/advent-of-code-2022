@@ -41,6 +41,10 @@ fn count_overlaps(input: &str) -> u32 {
     count
 }
 
+fn count_intersection(input: &str) -> u32 {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
