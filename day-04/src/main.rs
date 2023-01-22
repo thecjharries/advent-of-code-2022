@@ -19,8 +19,8 @@ use std::fs::read_to_string;
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
-    println!("Part 2: {}", input);
+    println!("Part 1: {}", count_overlaps(&input));
+    // println!("Part 2: {}", input);
 }
 
 fn count_overlaps(input: &str) -> u32 {
