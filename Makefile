@@ -1,3 +1,7 @@
+ifeq (,$(DAY))
+	DAY=$(shell printf "%02d" $(shell expr $(shell find . -maxdepth 1 -type d -name 'day-[0-9][0-9]' | sort -r | head -n 1 | sed -e 's/[^0-9]//g') + 1))
+endif
+
 ifndef DAY
 $(error DAY is not set)
 endif
