@@ -20,7 +20,7 @@ new:
 	cargo new day-$(DAY) --vcs none
 	rm -rf day-$(DAY)/src/main.rs
 	cp ./boilerplate.rs day-$(DAY)/src/main.rs
-	curl --cookie "$$SESSION_COOKIE" https://adventofcode.com/$(YEAR)/day/$(NONZERO_DAY)/input > day-$(DAY)/input.txt
+	curl --silent --cookie "$$SESSION_COOKIE" --output day-$(DAY)/input.txt https://adventofcode.com/$(YEAR)/day/$(NONZERO_DAY)/input
 	cd day-$(DAY) && cargo run || exit 0
 	git add .
 	git commit -am 'Add day $(DAY) boilerplate'
