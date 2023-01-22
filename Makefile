@@ -1,3 +1,5 @@
+YEAR=2022
+
 ifeq (,$(DAY))
 	DAY=$(shell printf "%02d" $(shell expr $(shell find . -maxdepth 1 -type d -name 'day-[0-9][0-9]' | sort -r | head -n 1 | sed -e 's/[^0-9]//g') + 1))
 endif
@@ -18,7 +20,7 @@ new:
 	cargo new day-$(DAY) --vcs none
 	rm -rf day-$(DAY)/src/main.rs
 	cp ./boilerplate.rs day-$(DAY)/src/main.rs
-	curl --cookie "$$SESSION_COOKIE" https://adventofcode.com/2020/day/$(NONZERO_DAY)/input > day-$(DAY)/input.txt
+	curl --cookie "$$SESSION_COOKIE" https://adventofcode.com/$(YEAR)/day/$(NONZERO_DAY)/input > day-$(DAY)/input.txt
 	cd day-$(DAY) && cargo run || exit 0
 	git add .
 	git commit -am 'Add day $(DAY) boilerplate'
