@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashSet;
+
 use std::fs::read_to_string;
 
 #[cfg(not(tarpaulin_include))]
@@ -22,7 +24,21 @@ fn main() {
 }
 
 fn count_overlaps(input: &str) -> u32 {
-    todo!()
+    let mut count: u32 = 0;
+    for line in input.trim().lines() {
+        let line = line.trim();
+        let groups: Vec<&str> = line.split(",").collect();
+        let first_group = groups[0].split("-").collect::<Vec<&str>>();
+        let first: HashSet<u32> =
+            (first_group[0].parse().unwrap()..=first_group[1].parse().unwrap()).collect();
+        let second_group = groups[1].split("-").collect::<Vec<&str>>();
+        let second: HashSet<u32> =
+            (second_group[0].parse().unwrap()..=second_group[1].parse().unwrap()).collect();
+        if first.is_subset(&second) || second.is_subset(&first) {
+            count += 1;
+        }
+    }
+    count
 }
 
 #[cfg(not(tarpaulin_include))]
