@@ -46,8 +46,11 @@ fn main() {
         vec!['G', 'V', 'Z', 'Q', 'H', 'T', 'C', 'W'],
     ];
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
-    println!("Part 2: {}", input);
+    println!(
+        "Part 1: {}",
+        determine_final_stack_tops(&input, stacks.clone())
+    );
+    // println!("Part 2: {}", input);
 }
 
 fn determine_final_stack_tops(input: &str, stacks: Vec<Vec<char>>) -> String {
