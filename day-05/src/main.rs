@@ -50,7 +50,10 @@ fn main() {
         "Part 1: {}",
         determine_final_stack_tops(&input, stacks.clone())
     );
-    // println!("Part 2: {}", input);
+    println!(
+        "Part 2: {}",
+        determine_final_stack_tops_9001(&input, stacks.clone())
+    );
 }
 
 fn determine_final_stack_tops(input: &str, stacks: Vec<Vec<char>>) -> String {
