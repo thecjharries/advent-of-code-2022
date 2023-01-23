@@ -12,7 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use lazy_static::lazy_static;
+use regex::Regex;
 use std::fs::read_to_string;
+
+lazy_static! {
+    static ref MOVE_PATTERN: Regex =
+        Regex::new(r"move (?P<count>\d+) from (?P<start>\d+) to (?P<end>\d+)").unwrap();
+}
 
 #[cfg(not(tarpaulin_include))]
 fn main() {
