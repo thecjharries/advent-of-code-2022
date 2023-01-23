@@ -21,8 +21,30 @@ lazy_static! {
         Regex::new(r"move (?P<count>\d+) from (?P<start>\d+) to (?P<end>\d+)").unwrap();
 }
 
+// I don't feel like messing with the regex for parsing this
+// Here's my input stacks
+//                         [R] [J] [W]
+//             [R] [N]     [T] [T] [C]
+// [R]         [P] [G]     [J] [P] [T]
+// [Q]     [C] [M] [V]     [F] [F] [H]
+// [G] [P] [M] [S] [Z]     [Z] [C] [Q]
+// [P] [C] [P] [Q] [J] [J] [P] [H] [Z]
+// [C] [T] [H] [T] [H] [P] [G] [L] [V]
+// [F] [W] [B] [L] [P] [D] [L] [N] [G]
+//  1   2   3   4   5   6   7   8   9
 #[cfg(not(tarpaulin_include))]
 fn main() {
+    let stacks = vec![
+        vec!['F', 'C', 'P', 'G', 'Q', 'R'],
+        vec!['W', 'T', 'C', 'P'],
+        vec!['B', 'H', 'P', 'M', 'C'],
+        vec!['L', 'T', 'Q', 'S', 'M', 'P', 'R'],
+        vec!['P', 'H', 'J', 'Z', 'V', 'G', 'N'],
+        vec!['D', 'P', 'J'],
+        vec!['L', 'G', 'P', 'Z', 'F', 'J', 'T', 'R'],
+        vec!['N', 'L', 'H', 'C', 'F', 'P', 'T', 'J'],
+        vec!['G', 'V', 'Z', 'Q', 'H', 'T', 'C', 'W'],
+    ];
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", input);
     println!("Part 2: {}", input);
