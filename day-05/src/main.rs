@@ -29,7 +29,26 @@ fn main() {
 }
 
 fn determine_final_stack_tops(input: &str, stacks: Vec<Vec<char>>) -> String {
-    todo!()
+    let mut stacks = stacks;
+    for line in input.trim().lines() {
+        if let Some(captures) = MOVE_PATTERN.captures(line) {
+            let count = captures["count"].parse::<usize>().unwrap();
+            let start = captures["start"].parse::<usize>().unwrap();
+            let end = captures["end"].parse::<usize>().unwrap();
+            let mut start_stack = stacks.get(start - 1).unwrap().clone();
+            let mut end_stack = stacks.get(end - 1).unwrap().clone();
+            for _ in 0..count {
+                end_stack.push(start_stack.pop().unwrap());
+            }
+            stacks[start - 1] = start_stack;
+            stacks[end - 1] = end_stack;
+        }
+    }
+    let mut final_stack_tops = String::new();
+    for mut stack in stacks {
+        final_stack_tops.push(stack.pop().unwrap().clone());
+    }
+    final_stack_tops
 }
 
 #[cfg(not(tarpaulin_include))]
