@@ -28,7 +28,7 @@ fn main() {
     println!("Part 2: {}", input);
 }
 
-fn determine_final_stack_top(input: &str) -> String {
+fn determine_final_stack_tops(input: &str, stacks: Vec<Vec<char>>) -> String {
     todo!()
 }
 
@@ -36,4 +36,25 @@ fn determine_final_stack_top(input: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_determine_final_stack_top() {
+        let stacks = vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']];
+        assert_eq!(
+            "CMZ".to_string(),
+            determine_final_stack_tops(
+                "    [D]
+                [N] [C]
+                [Z] [M] [P]
+                 1   2   3
+
+                move 1 from 2 to 1
+                move 3 from 1 to 3
+                move 2 from 2 to 1
+                move 1 from 1 to 2
+                ",
+                stacks
+            )
+        );
+    }
 }
