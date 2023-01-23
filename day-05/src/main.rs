@@ -28,6 +28,10 @@ fn main() {
     println!("Part 2: {}", input);
 }
 
+fn determine_final_stack_top(input: &str) -> String {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
