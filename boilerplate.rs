@@ -18,7 +18,7 @@ use std::fs::read_to_string;
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", input);
-    println!("Part 2: {}", input);
+    // println!("Part 2: {}", input);
 }
 
 #[cfg(not(tarpaulin_include))]
