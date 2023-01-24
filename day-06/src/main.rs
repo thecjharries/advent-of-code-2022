@@ -22,7 +22,7 @@ fn main() {
 }
 
 fn find_sop_marker(input: &str) -> u32 {
-    todo!()
+    0
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -33,6 +33,7 @@ mod tests {
     #[test]
     fn test_find_sop_marker() {
         assert_eq!(0, find_sop_marker("abc"));
+        assert_eq!(0, find_sop_marker("abcabcabcabcabcabcabcabcabcabcabcabc"));
         assert_eq!(7, find_sop_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb"));
         assert_eq!(5, find_sop_marker("bvwbjplbgvbhsrlpgdmjqwftvncz"));
         assert_eq!(6, find_sop_marker("nppdvjthqldpwncqszvftbrmjlhg"));
