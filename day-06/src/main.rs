@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashSet;
 use std::fs::read_to_string;
 
 #[cfg(not(tarpaulin_include))]
@@ -22,6 +23,16 @@ fn main() {
 }
 
 fn find_sop_marker(input: &str) -> u32 {
+    for index in 3..input.len() {
+        let set = input
+            .chars()
+            .skip(index - 3)
+            .take(4)
+            .collect::<HashSet<char>>();
+        if 4 == set.len() {
+            return index as u32 + 1;
+        }
+    }
     0
 }
 
