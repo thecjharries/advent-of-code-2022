@@ -20,6 +20,9 @@ fn main() {
     println!("Part 1: {}", input);
     // println!("Part 2: {}", input);
 }
+fn find_sop_marker(input: &str) -> u32 {
+    todo!()
+}
 
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
