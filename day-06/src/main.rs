@@ -18,7 +18,7 @@ use std::fs::read_to_string;
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    // println!("Part 1: {}", find_sop_marker(&input));
+    println!("Part 1: {}", find_marker(&input, 4));
     // println!("Part 2: {}", input);
 }
 
@@ -59,5 +59,10 @@ mod tests {
         assert_eq!(6, find_marker("nppdvjthqldpwncqszvftbrmjlhg", 4));
         assert_eq!(10, find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 4));
         assert_eq!(11, find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 4));
+        assert_eq!(19, find_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 14));
+        assert_eq!(23, find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz", 14));
+        assert_eq!(23, find_marker("nppdvjthqldpwncqszvftbrmjlhg", 14));
+        assert_eq!(29, find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 14));
+        assert_eq!(26, find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 14));
     }
 }
