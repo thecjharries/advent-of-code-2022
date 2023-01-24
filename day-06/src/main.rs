@@ -18,18 +18,18 @@ use std::fs::read_to_string;
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", find_sop_marker(&input));
+    // println!("Part 1: {}", find_sop_marker(&input));
     // println!("Part 2: {}", input);
 }
 
-fn find_marker(input: &str, marker_length: u32) -> u32 {
-    if marker_length as usize > input.len() {
+fn find_marker(input: &str, marker_length: usize) -> u32 {
+    if marker_length > input.len() {
         return 0;
     }
     for index in (marker_length - 1)..input.len() {
         let set = input
             .chars()
-            .skip(index - marker_length + 1)
+            .skip((index + 1) - marker_length)
             .take(marker_length)
             .collect::<HashSet<char>>();
         if marker_length == set.len() {
@@ -45,13 +45,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_find_sop_marker() {
-        assert_eq!(0, find_sop_marker("abc"));
-        assert_eq!(0, find_sop_marker("abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc"));
-        assert_eq!(7, find_sop_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb"));
-        assert_eq!(5, find_sop_marker("bvwbjplbgvbhsrlpgdmjqwftvncz"));
-        assert_eq!(6, find_sop_marker("nppdvjthqldpwncqszvftbrmjlhg"));
-        assert_eq!(10, find_sop_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"));
-        assert_eq!(11, find_sop_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"));
+    fn test_find_marker() {
+        assert_eq!(0, find_marker("abc", 4));
+        assert_eq!(
+            0,
+            find_marker(
+                "abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc",
+                4
+            )
+        );
+        assert_eq!(7, find_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 4));
+        assert_eq!(5, find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz", 4));
+        assert_eq!(6, find_marker("nppdvjthqldpwncqszvftbrmjlhg", 4));
+        assert_eq!(10, find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 4));
+        assert_eq!(11, find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 4));
     }
 }
