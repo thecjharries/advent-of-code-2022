@@ -22,14 +22,17 @@ fn main() {
     // println!("Part 2: {}", input);
 }
 
-fn find_sop_marker(input: &str) -> u32 {
-    for index in 3..input.len() {
+fn find_marker(input: &str, marker_length: u32) -> u32 {
+    if marker_length as usize > input.len() {
+        return 0;
+    }
+    for index in (marker_length - 1)..input.len() {
         let set = input
             .chars()
-            .skip(index - 3)
-            .take(4)
+            .skip(index - marker_length + 1)
+            .take(marker_length)
             .collect::<HashSet<char>>();
-        if 4 == set.len() {
+        if marker_length == set.len() {
             return index as u32 + 1;
         }
     }
@@ -44,7 +47,7 @@ mod tests {
     #[test]
     fn test_find_sop_marker() {
         assert_eq!(0, find_sop_marker("abc"));
-        assert_eq!(0, find_sop_marker("abcabcabcabcabcabcabcabcabcabcabcabc"));
+        assert_eq!(0, find_sop_marker("abcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabcabc"));
         assert_eq!(7, find_sop_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb"));
         assert_eq!(5, find_sop_marker("bvwbjplbgvbhsrlpgdmjqwftvncz"));
         assert_eq!(6, find_sop_marker("nppdvjthqldpwncqszvftbrmjlhg"));
