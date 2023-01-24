@@ -19,7 +19,7 @@ use std::fs::read_to_string;
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", find_marker(&input, 4));
-    // println!("Part 2: {}", input);
+    println!("Part 2: {}", find_marker(&input, 14));
 }
 
 fn find_marker(input: &str, marker_length: usize) -> u32 {
