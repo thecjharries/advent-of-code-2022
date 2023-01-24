@@ -20,6 +20,7 @@ fn main() {
     println!("Part 1: {}", input);
     // println!("Part 2: {}", input);
 }
+
 fn find_sop_marker(input: &str) -> u32 {
     todo!()
 }
@@ -28,4 +29,14 @@ fn find_sop_marker(input: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_find_sop_marker() {
+        assert_eq!(0, find_sop_marker("abc"));
+        assert_eq!(7, find_sop_marker("mjqjpqmgbljsphdztnvjfqwrcgsmlb"));
+        assert_eq!(5, find_sop_marker("bvwbjplbgvbhsrlpgdmjqwftvncz"));
+        assert_eq!(6, find_sop_marker("nppdvjthqldpwncqszvftbrmjlhg"));
+        assert_eq!(10, find_sop_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"));
+        assert_eq!(11, find_sop_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"));
+    }
 }
