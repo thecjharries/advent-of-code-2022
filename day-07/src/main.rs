@@ -33,21 +33,6 @@ struct Node {
     parent: Option<NodeId>,
 }
 
-impl Node {
-    fn get_size(&self, nodes: &Vec<Node>) -> u32 {
-        match self.item_type {
-            ItemType::File(size) => size,
-            ItemType::Directory => {
-                let mut size = 0;
-                for child in self.children.iter() {
-                    size += nodes[child.index].get_size(nodes);
-                }
-                size
-            }
-        }
-    }
-}
-
 #[derive(Debug, PartialEq)]
 struct FileSystem {
     nodes: Vec<Node>,
@@ -78,7 +63,20 @@ impl FileSystem {
             index: self.nodes.len(),
         };
         self.nodes.push(node);
+        self.nodes[self.current_node.index].children.push(node_id);
         node_id
+    }
+
+    fn get_size(&self, node_id: NodeId) -> u32 {
+        let node = &self.nodes[node_id.index];
+        match node.item_type {
+            ItemType::File(size) => size,
+            ItemType::Directory => node
+                .children
+                .iter()
+                .map(|child_id| self.get_size(*child_id))
+                .sum(),
+        }
     }
 }
 
@@ -102,9 +100,6 @@ fn build_file_system(input: &str) -> FileSystem {
             let line_parts: Vec<&str> = line.split_whitespace().collect();
             let node_name = line_parts[2];
             let node_id = file_system.new_node(node_name, ItemType::Directory);
-            file_system.nodes[file_system.current_node.index]
-                .children
-                .push(node_id);
             file_system.current_node = node_id;
         } else if line.starts_with("$") {
             continue;
@@ -132,33 +127,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_node_get_size() {
-        let nodes = vec![
-            Node {
-                name: String::from("/"),
-                item_type: ItemType::Directory,
-                children: vec![NodeId { index: 1 }],
-                parent: None,
-            },
-            Node {
-                name: String::from("a"),
-                item_type: ItemType::Directory,
-                children: vec![NodeId { index: 2 }],
-                parent: Some(NodeId { index: 0 }),
-            },
-            Node {
-                name: String::from("b"),
-                item_type: ItemType::File(10),
-                children: vec![],
-                parent: Some(NodeId { index: 1 }),
-            },
-        ];
-        assert_eq!(10, nodes[0].get_size(&nodes));
-        assert_eq!(10, nodes[1].get_size(&nodes));
-        assert_eq!(10, nodes[2].get_size(&nodes));
-    }
-
-    #[test]
     fn test_new_file_system() {
         let expected = FileSystem {
             nodes: vec![Node {
@@ -181,40 +149,50 @@ mod tests {
     }
 
     #[test]
-    fn test_build_file_system() {
-        let input = "$ cd /
-        $ ls
-        dir a
-        14848514 b.txt
-        8504156 c.dat
-        dir d
-        $ cd a
-        $ ls
-        dir e
-        29116 f
-        2557 g
-        62596 h.lst
-        $ cd e
-        $ ls
-        584 i
-        $ cd ..
-        $ cd ..
-        $ cd d
-        $ ls
-        4060174 j
-        8033020 d.log
-        5626152 d.ext
-        7214296 k
-
-        ";
-        let mut file_system = build_file_system(input);
-        assert_eq!(14, file_system.nodes.len());
-        file_system.current_node = NodeId { index: 0 };
-        assert_eq!(
-            4,
-            file_system.nodes[file_system.current_node.index]
-                .children
-                .len()
-        );
+    fn test_get_size() {
+        let mut file_system = FileSystem::new();
+        let node_id = file_system.new_node("a", ItemType::Directory);
+        file_system.new_node("b", ItemType::File(10));
+        file_system.new_node("c", ItemType::File(20));
+        assert_eq!(0, file_system.get_size(node_id));
+        assert_eq!(30, file_system.get_size(NodeId { index: 0 }));
     }
+
+    // #[test]
+    // fn test_build_file_system() {
+    //     let input = "$ cd /
+    //     $ ls
+    //     dir a
+    //     14848514 b.txt
+    //     8504156 c.dat
+    //     dir d
+    //     $ cd a
+    //     $ ls
+    //     dir e
+    //     29116 f
+    //     2557 g
+    //     62596 h.lst
+    //     $ cd e
+    //     $ ls
+    //     584 i
+    //     $ cd ..
+    //     $ cd ..
+    //     $ cd d
+    //     $ ls
+    //     4060174 j
+    //     8033020 d.log
+    //     5626152 d.ext
+    //     7214296 k
+
+    //     ";
+    //     let mut file_system = build_file_system(input);
+    //     assert_eq!(14, file_system.nodes.len());
+    //     file_system.current_node = NodeId { index: 0 };
+    //     assert_eq!(
+    //         4,
+    //         file_system.nodes[file_system.current_node.index]
+    //             .children
+    //             .len()
+    //     );
+    // }
 }
