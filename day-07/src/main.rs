@@ -75,19 +75,40 @@ fn main() {
 }
 
 fn build_file_system(input: &str) -> FileSystem {
-    // let mut file_system = FileSystem::new();
-    // let mut lines: Vec<&str> = input.trim().lines().collect();
-    // for line in lines[1..].iter() {
-    //     let line = line.trim();
-    //     if "$ cd .." == line {
-    //         file_system.current_node = file_system.nodes[file_system.current_node.index].parent.unwrap();
-    //     } else if line.starts_with("$ cd") {
-    //         let line_parts: Vec<&str> = line.split_whitespace().collect();
-    //         let node_name = line_parts[2];
-
-    //     }
-    // }
-    todo!()
+    let mut file_system = FileSystem::new();
+    let lines: Vec<&str> = input.trim().lines().collect();
+    for line in lines[1..].iter() {
+        let line = line.trim();
+        if "$ cd .." == line {
+            file_system.current_node = file_system.nodes[file_system.current_node.index]
+                .parent
+                .unwrap();
+        } else if line.starts_with("$ cd") {
+            let line_parts: Vec<&str> = line.split_whitespace().collect();
+            let node_name = line_parts[2];
+            let node_id = file_system.new_node(node_name, ItemType::Directory);
+            file_system.nodes[file_system.current_node.index]
+                .children
+                .push(node_id);
+            file_system.current_node = node_id;
+        } else if line.starts_with("$") {
+            continue;
+        } else {
+            let line_parts: Vec<&str> = line.split_whitespace().collect();
+            let item_type = match line_parts[0] {
+                "dir" => {
+                    continue;
+                }
+                _ => ItemType::File(line_parts[0].parse().unwrap()),
+            };
+            let node_name = line_parts[1];
+            let node_id = file_system.new_node(node_name, item_type);
+            file_system.nodes[file_system.current_node.index]
+                .children
+                .push(node_id);
+        }
+    }
+    file_system
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -144,7 +165,14 @@ mod tests {
         7214296 k
 
         ";
-        let file_system = build_file_system(input);
-        assert_eq!(13, file_system.nodes.len());
+        let mut file_system = build_file_system(input);
+        assert_eq!(14, file_system.nodes.len());
+        file_system.current_node = NodeId { index: 0 };
+        assert_eq!(
+            4,
+            file_system.nodes[file_system.current_node.index]
+                .children
+                .len()
+        );
     }
 }
