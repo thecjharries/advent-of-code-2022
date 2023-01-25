@@ -84,10 +84,6 @@ impl FileSystem {
         for index in 0..self.nodes.len() {
             let item_size = self.get_size(NodeId { index });
             if ItemType::Directory == self.nodes[index].item_type && item_size <= size {
-                println!(
-                    "Found directory {} with size {}",
-                    self.nodes[index].name, item_size
-                );
                 sum += item_size
             }
         }
@@ -98,7 +94,11 @@ impl FileSystem {
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
+    let file_system = build_file_system(&input);
+    println!(
+        "Part 1: {}",
+        file_system.find_size_of_directories_at_most(100000)
+    );
     // println!("Part 2: {}", input);
 }
 
