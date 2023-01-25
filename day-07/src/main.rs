@@ -36,6 +36,21 @@ struct Node {
 #[derive(Debug, PartialEq)]
 struct FileSystem {
     nodes: Vec<Node>,
+    current_node: NodeId,
+}
+
+impl FileSystem {
+    fn new() -> FileSystem {
+        FileSystem {
+            nodes: vec![Node {
+                name: String::from("/"),
+                item_type: ItemType::Directory,
+                children: vec![],
+                parent: None,
+            }],
+            current_node: NodeId { index: 0 },
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -49,4 +64,18 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_new_file_system() {
+        let expected = FileSystem {
+            nodes: vec![Node {
+                name: String::from("/"),
+                item_type: ItemType::Directory,
+                children: vec![],
+                parent: None,
+            }],
+            current_node: NodeId { index: 0 },
+        };
+        assert_eq!(expected, FileSystem::new());
+    }
 }
