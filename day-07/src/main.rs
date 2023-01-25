@@ -14,6 +14,8 @@
 
 use std::fs::read_to_string;
 
+const TOTAL_DISK_SPACE: u32 = 70000000;
+
 #[derive(Debug, PartialEq)]
 enum ItemType {
     File(u32),
@@ -88,6 +90,22 @@ impl FileSystem {
             }
         }
         sum
+    }
+
+    fn find_smallest_to_create_space(&self, size: u32) -> u32 {
+        let currently_available = TOTAL_DISK_SPACE - self.get_size(NodeId { index: 0 });
+        let needed_space = size - currently_available;
+        let mut smallest_size = u32::MAX;
+        for index in 0..self.nodes.len() {
+            let item_size = self.get_size(NodeId { index });
+            if ItemType::Directory == self.nodes[index].item_type
+                && item_size >= needed_space
+                && item_size < smallest_size
+            {
+                smallest_size = item_size
+            }
+        }
+        smallest_size
     }
 }
 
@@ -237,5 +255,39 @@ mod tests {
         ";
         let file_system = build_file_system(input);
         assert_eq!(95437, file_system.find_size_of_directories_at_most(100000));
+    }
+
+    #[test]
+    fn test_file_system_find_smallest_to_create_space() {
+        let input = "$ cd /
+        $ ls
+        dir a
+        14848514 b.txt
+        8504156 c.dat
+        dir d
+        $ cd a
+        $ ls
+        dir e
+        29116 f
+        2557 g
+        62596 h.lst
+        $ cd e
+        $ ls
+        584 i
+        $ cd ..
+        $ cd ..
+        $ cd d
+        $ ls
+        4060174 j
+        8033020 d.log
+        5626152 d.ext
+        7214296 k
+
+        ";
+        let file_system = build_file_system(input);
+        assert_eq!(
+            24933642,
+            file_system.find_smallest_to_create_space(30000000)
+        );
     }
 }
