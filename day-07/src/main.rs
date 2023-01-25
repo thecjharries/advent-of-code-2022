@@ -78,6 +78,21 @@ impl FileSystem {
                 .sum(),
         }
     }
+
+    fn find_size_of_directories_at_most(&self, size: u32) -> u32 {
+        let mut sum = 0;
+        for index in 0..self.nodes.len() {
+            let item_size = self.get_size(NodeId { index });
+            if ItemType::Directory == self.nodes[index].item_type && item_size <= size {
+                println!(
+                    "Found directory {} with size {}",
+                    self.nodes[index].name, item_size
+                );
+                sum += item_size
+            }
+        }
+        sum
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -191,5 +206,36 @@ mod tests {
                 .children
                 .len()
         );
+    }
+
+    #[test]
+    fn test_file_system_find_size_of_directories_at_most() {
+        let input = "$ cd /
+        $ ls
+        dir a
+        14848514 b.txt
+        8504156 c.dat
+        dir d
+        $ cd a
+        $ ls
+        dir e
+        29116 f
+        2557 g
+        62596 h.lst
+        $ cd e
+        $ ls
+        584 i
+        $ cd ..
+        $ cd ..
+        $ cd d
+        $ ls
+        4060174 j
+        8033020 d.log
+        5626152 d.ext
+        7214296 k
+
+        ";
+        let file_system = build_file_system(input);
+        assert_eq!(95437, file_system.find_size_of_directories_at_most(100000));
     }
 }
