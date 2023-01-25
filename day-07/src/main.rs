@@ -14,42 +14,6 @@
 
 use std::fs::read_to_string;
 
-#[derive(Debug, PartialEq)]
-enum ItemType {
-    File(u32),
-    Directory,
-}
-
-#[derive(Debug, PartialEq)]
-struct SystemItem {
-    name: String,
-    parent: Option<Box<SystemItem>>,
-    item_type: ItemType,
-    children: Vec<SystemItem>,
-}
-
-impl SystemItem {
-    fn new(name: String, parent: Option<Box<SystemItem>>, item_type: ItemType) -> SystemItem {
-        SystemItem {
-            name,
-            parent,
-            item_type,
-            children: Vec::new(),
-        }
-    }
-
-    fn add_child(&mut self, child: SystemItem) {
-        self.children.push(child);
-    }
-
-    fn get_size(&self) -> u32 {
-        match self.item_type {
-            ItemType::File(size) => size,
-            ItemType::Directory => self.children.iter().map(|child| child.get_size()).sum(),
-        }
-    }
-}
-
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -57,91 +21,8 @@ fn main() {
     // println!("Part 2: {}", input);
 }
 
-fn build_file_system(input: &str) -> SystemItem {
-    todo!()
-}
-
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_system_item_new_directory() {
-        let name = String::from("test");
-        let parent = None;
-        let item_type = ItemType::Directory;
-        let system_item = SystemItem::new(name, parent, item_type);
-        assert_eq!("test", system_item.name);
-        assert_eq!(None, system_item.parent);
-        assert_eq!(ItemType::Directory, system_item.item_type);
-        assert_eq!(0, system_item.children.len());
-    }
-
-    #[test]
-    fn test_system_item_new_file() {
-        let name = String::from("test");
-        let parent = None;
-        let item_type = ItemType::File(1);
-        let system_item = SystemItem::new(name, parent, item_type);
-        assert_eq!("test", system_item.name);
-        assert_eq!(None, system_item.parent);
-        assert_eq!(ItemType::File(1), system_item.item_type);
-        assert_eq!(0, system_item.children.len());
-    }
-
-    #[test]
-    fn test_system_item_add_child() {
-        let mut parent = SystemItem::new(String::from("parent"), None, ItemType::Directory);
-        let child = SystemItem::new(String::from("child"), None, ItemType::File(1));
-        parent.add_child(child);
-        assert_eq!(1, parent.children.len());
-    }
-
-    #[test]
-    fn test_system_item_get_size_directory() {
-        let mut parent = SystemItem::new(String::from("parent"), None, ItemType::Directory);
-        let child = SystemItem::new(String::from("child"), None, ItemType::File(1));
-        parent.add_child(child);
-        assert_eq!(1, parent.get_size());
-    }
-
-    #[test]
-    fn test_system_item_get_size_file() {
-        let parent = SystemItem::new(String::from("parent"), None, ItemType::File(1));
-        assert_eq!(1, parent.get_size());
-    }
-
-    #[test]
-    fn test_build_file_system() {
-        let input = "$ cd /
-        $ ls
-        dir a
-        14848514 b.txt
-        8504156 c.dat
-        dir d
-        $ cd a
-        $ ls
-        dir e
-        29116 f
-        2557 g
-        62596 h.lst
-        $ cd e
-        $ ls
-        584 i
-        $ cd ..
-        $ cd ..
-        $ cd d
-        $ ls
-        4060174 j
-        8033020 d.log
-        5626152 d.ext
-        7214296 k
-
-        ";
-        let file_system = build_file_system(input);
-        assert_eq!("/", file_system.name);
-        assert_eq!(None, file_system.parent);
-        assert_eq!(ItemType::Directory, file_system.item_type);
-        assert_eq!(4, file_system.children.len());
 }
