@@ -37,6 +37,10 @@ impl SystemItem {
             children: Vec::new(),
         }
     }
+
+    fn add_child(&mut self, child: SystemItem) {
+        self.children.push(child);
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -73,5 +77,13 @@ mod tests {
         assert_eq!(None, system_item.parent);
         assert_eq!(ItemType::File(1), system_item.item_type);
         assert_eq!(0, system_item.children.len());
+    }
+
+    #[test]
+    fn test_system_item_add_child() {
+        let mut parent = SystemItem::new(String::from("parent"), None, ItemType::Directory);
+        let child = SystemItem::new(String::from("child"), None, ItemType::File(1));
+        parent.add_child(child);
+        assert_eq!(1, parent.children.len());
     }
 }
