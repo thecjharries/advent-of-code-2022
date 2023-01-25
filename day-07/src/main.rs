@@ -127,7 +127,7 @@ fn build_file_system(input: &str) -> FileSystem {
                 _ => ItemType::File(line_parts[0].parse().unwrap()),
             };
             let node_name = line_parts[1];
-            let node_id = file_system.new_node(node_name, item_type);
+            file_system.new_node(node_name, item_type);
         }
     }
     file_system
