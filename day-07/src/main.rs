@@ -20,6 +20,24 @@ enum ItemType {
     Directory,
 }
 
+#[derive(Debug, PartialEq)]
+struct NodeId {
+    index: usize,
+}
+
+#[derive(Debug, PartialEq)]
+struct Node {
+    name: String,
+    item_type: ItemType,
+    children: Vec<Node>,
+    parent: Option<NodeId>,
+}
+
+#[derive(Debug, PartialEq)]
+struct FileSystem {
+    nodes: Vec<Node>,
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
