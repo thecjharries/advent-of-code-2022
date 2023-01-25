@@ -60,6 +60,10 @@ fn main() {
     // println!("Part 2: {}", input);
 }
 
+fn build_file_system(input: &str) -> FileSystem {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
