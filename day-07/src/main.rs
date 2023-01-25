@@ -14,6 +14,12 @@
 
 use std::fs::read_to_string;
 
+#[derive(Debug, PartialEq)]
+enum ItemType {
+    File(u32),
+    Directory,
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
