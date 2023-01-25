@@ -117,7 +117,10 @@ fn main() {
         "Part 1: {}",
         file_system.find_size_of_directories_at_most(100000)
     );
-    // println!("Part 2: {}", input);
+    println!(
+        "Part 2: {}",
+        file_system.find_smallest_to_create_space(30000000)
+    );
 }
 
 fn build_file_system(input: &str) -> FileSystem {
