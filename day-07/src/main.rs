@@ -113,9 +113,6 @@ fn build_file_system(input: &str) -> FileSystem {
             };
             let node_name = line_parts[1];
             let node_id = file_system.new_node(node_name, item_type);
-            file_system.nodes[file_system.current_node.index]
-                .children
-                .push(node_id);
         }
     }
     file_system
@@ -158,41 +155,41 @@ mod tests {
         assert_eq!(30, file_system.get_size(NodeId { index: 0 }));
     }
 
-    // #[test]
-    // fn test_build_file_system() {
-    //     let input = "$ cd /
-    //     $ ls
-    //     dir a
-    //     14848514 b.txt
-    //     8504156 c.dat
-    //     dir d
-    //     $ cd a
-    //     $ ls
-    //     dir e
-    //     29116 f
-    //     2557 g
-    //     62596 h.lst
-    //     $ cd e
-    //     $ ls
-    //     584 i
-    //     $ cd ..
-    //     $ cd ..
-    //     $ cd d
-    //     $ ls
-    //     4060174 j
-    //     8033020 d.log
-    //     5626152 d.ext
-    //     7214296 k
+    #[test]
+    fn test_build_file_system() {
+        let input = "$ cd /
+        $ ls
+        dir a
+        14848514 b.txt
+        8504156 c.dat
+        dir d
+        $ cd a
+        $ ls
+        dir e
+        29116 f
+        2557 g
+        62596 h.lst
+        $ cd e
+        $ ls
+        584 i
+        $ cd ..
+        $ cd ..
+        $ cd d
+        $ ls
+        4060174 j
+        8033020 d.log
+        5626152 d.ext
+        7214296 k
 
-    //     ";
-    //     let mut file_system = build_file_system(input);
-    //     assert_eq!(14, file_system.nodes.len());
-    //     file_system.current_node = NodeId { index: 0 };
-    //     assert_eq!(
-    //         4,
-    //         file_system.nodes[file_system.current_node.index]
-    //             .children
-    //             .len()
-    //     );
-    // }
+        ";
+        let mut file_system = build_file_system(input);
+        assert_eq!(14, file_system.nodes.len());
+        file_system.current_node = NodeId { index: 0 };
+        assert_eq!(
+            4,
+            file_system.nodes[file_system.current_node.index]
+                .children
+                .len()
+        );
+    }
 }
