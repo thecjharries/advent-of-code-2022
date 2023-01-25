@@ -14,16 +14,29 @@
 
 use std::fs::read_to_string;
 
+#[derive(Debug, PartialEq)]
 enum ItemType {
-    File,
+    File(u32),
     Directory,
 }
 
+#[derive(Debug, PartialEq)]
 struct SystemItem {
     name: String,
     parent: Option<Box<SystemItem>>,
     item_type: ItemType,
     children: Vec<SystemItem>,
+}
+
+impl SystemItem {
+    fn new(name: String, parent: Option<Box<SystemItem>>, item_type: ItemType) -> SystemItem {
+        SystemItem {
+            name,
+            parent,
+            item_type,
+            children: Vec::new(),
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -37,4 +50,28 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_system_item_new_directory() {
+        let name = String::from("test");
+        let parent = None;
+        let item_type = ItemType::Directory;
+        let system_item = SystemItem::new(name, parent, item_type);
+        assert_eq!("test", system_item.name);
+        assert_eq!(None, system_item.parent);
+        assert_eq!(ItemType::Directory, system_item.item_type);
+        assert_eq!(0, system_item.children.len());
+    }
+
+    #[test]
+    fn test_system_item_new_file() {
+        let name = String::from("test");
+        let parent = None;
+        let item_type = ItemType::File(1);
+        let system_item = SystemItem::new(name, parent, item_type);
+        assert_eq!("test", system_item.name);
+        assert_eq!(None, system_item.parent);
+        assert_eq!(ItemType::File(1), system_item.item_type);
+        assert_eq!(0, system_item.children.len());
+    }
 }
