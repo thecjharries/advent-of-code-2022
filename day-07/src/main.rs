@@ -14,6 +14,18 @@
 
 use std::fs::read_to_string;
 
+enum ItemType {
+    File,
+    Directory,
+}
+
+struct SystemItem {
+    name: String,
+    parent: Option<Box<SystemItem>>,
+    item_type: ItemType,
+    children: Vec<SystemItem>,
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
