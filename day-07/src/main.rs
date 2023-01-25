@@ -41,6 +41,13 @@ impl SystemItem {
     fn add_child(&mut self, child: SystemItem) {
         self.children.push(child);
     }
+
+    fn get_size(&self) -> u32 {
+        match self.item_type {
+            ItemType::File(size) => size,
+            ItemType::Directory => self.children.iter().map(|child| child.get_size()).sum(),
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -85,5 +92,19 @@ mod tests {
         let child = SystemItem::new(String::from("child"), None, ItemType::File(1));
         parent.add_child(child);
         assert_eq!(1, parent.children.len());
+    }
+
+    #[test]
+    fn test_system_item_get_size_directory() {
+        let mut parent = SystemItem::new(String::from("parent"), None, ItemType::Directory);
+        let child = SystemItem::new(String::from("child"), None, ItemType::File(1));
+        parent.add_child(child);
+        assert_eq!(1, parent.get_size());
+    }
+
+    #[test]
+    fn test_system_item_get_size_file() {
+        let parent = SystemItem::new(String::from("parent"), None, ItemType::File(1));
+        assert_eq!(1, parent.get_size());
     }
 }
