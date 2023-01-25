@@ -20,7 +20,7 @@ enum ItemType {
     Directory,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 struct NodeId {
     index: usize,
 }
@@ -29,7 +29,7 @@ struct NodeId {
 struct Node {
     name: String,
     item_type: ItemType,
-    children: Vec<Node>,
+    children: Vec<NodeId>,
     parent: Option<NodeId>,
 }
 
@@ -51,6 +51,20 @@ impl FileSystem {
             current_node: NodeId { index: 0 },
         }
     }
+
+    fn new_node(&mut self, name: &str, item_type: ItemType) -> NodeId {
+        let node = Node {
+            name: String::from(name),
+            item_type,
+            children: vec![],
+            parent: Some(self.current_node),
+        };
+        let node_id = NodeId {
+            index: self.nodes.len(),
+        };
+        self.nodes.push(node);
+        node_id
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -61,6 +75,18 @@ fn main() {
 }
 
 fn build_file_system(input: &str) -> FileSystem {
+    // let mut file_system = FileSystem::new();
+    // let mut lines: Vec<&str> = input.trim().lines().collect();
+    // for line in lines[1..].iter() {
+    //     let line = line.trim();
+    //     if "$ cd .." == line {
+    //         file_system.current_node = file_system.nodes[file_system.current_node.index].parent.unwrap();
+    //     } else if line.starts_with("$ cd") {
+    //         let line_parts: Vec<&str> = line.split_whitespace().collect();
+    //         let node_name = line_parts[2];
+
+    //     }
+    // }
     todo!()
 }
 
@@ -81,6 +107,14 @@ mod tests {
             current_node: NodeId { index: 0 },
         };
         assert_eq!(expected, FileSystem::new());
+    }
+
+    #[test]
+    fn test_new_node() {
+        let mut file_system = FileSystem::new();
+        let expected = NodeId { index: 1 };
+        assert_eq!(expected, file_system.new_node("a", ItemType::Directory));
+        assert_eq!(2, file_system.nodes.len());
     }
 
     #[test]
