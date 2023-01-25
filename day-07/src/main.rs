@@ -33,6 +33,21 @@ struct Node {
     parent: Option<NodeId>,
 }
 
+impl Node {
+    fn get_size(&self, nodes: &Vec<Node>) -> u32 {
+        match self.item_type {
+            ItemType::File(size) => size,
+            ItemType::Directory => {
+                let mut size = 0;
+                for child in self.children.iter() {
+                    size += nodes[child.index].get_size(nodes);
+                }
+                size
+            }
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 struct FileSystem {
     nodes: Vec<Node>,
@@ -115,6 +130,33 @@ fn build_file_system(input: &str) -> FileSystem {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_node_get_size() {
+        let nodes = vec![
+            Node {
+                name: String::from("/"),
+                item_type: ItemType::Directory,
+                children: vec![NodeId { index: 1 }],
+                parent: None,
+            },
+            Node {
+                name: String::from("a"),
+                item_type: ItemType::Directory,
+                children: vec![NodeId { index: 2 }],
+                parent: Some(NodeId { index: 0 }),
+            },
+            Node {
+                name: String::from("b"),
+                item_type: ItemType::File(10),
+                children: vec![],
+                parent: Some(NodeId { index: 1 }),
+            },
+        ];
+        assert_eq!(10, nodes[0].get_size(&nodes));
+        assert_eq!(10, nodes[1].get_size(&nodes));
+        assert_eq!(10, nodes[2].get_size(&nodes));
+    }
 
     #[test]
     fn test_new_file_system() {
