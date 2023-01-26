@@ -81,6 +81,10 @@ fn find_visible_trees(input: &str) -> usize {
     trees
 }
 
+fn find_best_scenic_score(input: &str) -> usize {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
