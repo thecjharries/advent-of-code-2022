@@ -29,4 +29,16 @@ fn find_visible_trees(input: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_find_visible_trees() {
+        let input = "30373
+        25512
+        65332
+        33549
+        35390
+
+        ";
+        assert_eq!(21, find_visible_trees(input));
+    }
 }
