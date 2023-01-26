@@ -18,7 +18,7 @@ use std::fs::read_to_string;
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", find_visible_trees(&input));
-    // println!("Part 2: {}", input);
+    println!("Part 2: {}", find_best_scenic_score(&input));
 }
 
 fn find_visible_trees(input: &str) -> usize {
