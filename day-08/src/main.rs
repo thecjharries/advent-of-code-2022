@@ -21,8 +21,64 @@ fn main() {
     // println!("Part 2: {}", input);
 }
 
-fn find_visible_trees(input: &str) -> u32 {
-    todo!()
+fn find_visible_trees(input: &str) -> usize {
+    let lines: Vec<&str> = input.trim().lines().map(|line| line.trim()).collect();
+    let mut grid = vec![vec![0; lines[0].len()]; lines.len()];
+    let mut trees = 2 * lines.len() - 2 + (2 * lines[0].len() - 2);
+    for (y, line) in lines.iter().enumerate() {
+        for (x, character) in line.chars().enumerate() {
+            grid[y][x] = character.to_digit(10).unwrap();
+        }
+    }
+    for (y, line) in grid[1..grid.len() - 1].iter().enumerate() {
+        for (x, tree) in line[1..line.len() - 1].iter().enumerate() {
+            let mut is_visible = true;
+            for index in 0..x + 1 {
+                if grid[y + 1][index] >= *tree {
+                    is_visible = false;
+                    break;
+                }
+            }
+            if is_visible {
+                trees += 1;
+                continue;
+            }
+            is_visible = true;
+            for index in x + 2..line.len() {
+                if grid[y + 1][index] >= *tree {
+                    is_visible = false;
+                    break;
+                }
+            }
+            if is_visible {
+                trees += 1;
+                continue;
+            }
+            is_visible = true;
+            for index in 0..y + 1 {
+                if grid[index][x + 1] >= *tree {
+                    is_visible = false;
+                    break;
+                }
+            }
+            if is_visible {
+                trees += 1;
+                continue;
+            }
+            is_visible = true;
+            for index in y + 2..grid.len() {
+                if grid[index][x + 1] >= *tree {
+                    is_visible = false;
+                    break;
+                }
+            }
+            if is_visible {
+                trees += 1;
+                continue;
+            }
+        }
+    }
+    trees
 }
 
 #[cfg(not(tarpaulin_include))]
