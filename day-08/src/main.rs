@@ -82,7 +82,55 @@ fn find_visible_trees(input: &str) -> usize {
 }
 
 fn find_best_scenic_score(input: &str) -> usize {
-    todo!()
+    let lines: Vec<&str> = input.trim().lines().map(|line| line.trim()).collect();
+    let mut grid = vec![vec![0; lines[0].len()]; lines.len()];
+    for (y, line) in lines.iter().enumerate() {
+        for (x, character) in line.chars().enumerate() {
+            grid[y][x] = character.to_digit(10).unwrap();
+        }
+    }
+    let mut max_scenic_score = 0;
+    for (y, line) in grid[1..grid.len() - 1].iter().enumerate() {
+        for (x, tree) in line[1..line.len() - 1].iter().enumerate() {
+            let mut current_scenic_score = 1;
+            let mut current_visible = 0;
+            for index in (0..x + 1).rev() {
+                current_visible += 1;
+                if grid[y + 1][index] >= *tree {
+                    break;
+                }
+            }
+            current_scenic_score *= current_visible;
+            current_visible = 0;
+            for index in x + 2..line.len() {
+                current_visible += 1;
+                if grid[y + 1][index] >= *tree {
+                    break;
+                }
+            }
+            current_scenic_score *= current_visible;
+            current_visible = 0;
+            for index in (0..y + 1).rev() {
+                current_visible += 1;
+                if grid[index][x + 1] >= *tree {
+                    break;
+                }
+            }
+            current_scenic_score *= current_visible;
+            current_visible = 0;
+            for index in y + 2..grid.len() {
+                current_visible += 1;
+                if grid[index][x + 1] >= *tree {
+                    break;
+                }
+            }
+            current_scenic_score *= current_visible;
+            if current_scenic_score > max_scenic_score {
+                max_scenic_score = current_scenic_score;
+            }
+        }
+    }
+    max_scenic_score
 }
 
 #[cfg(not(tarpaulin_include))]
