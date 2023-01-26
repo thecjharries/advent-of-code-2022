@@ -21,6 +21,10 @@ fn main() {
     // println!("Part 2: {}", input);
 }
 
+fn find_visible_trees(input: &str) -> u32 {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
