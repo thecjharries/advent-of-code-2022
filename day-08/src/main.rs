@@ -101,4 +101,16 @@ mod tests {
         ";
         assert_eq!(21, find_visible_trees(input));
     }
+
+    #[test]
+    fn test_find_best_scenic_score() {
+        let input = "30373
+        25512
+        65332
+        33549
+        35390
+
+        ";
+        assert_eq!(8, find_best_scenic_score(input));
+    }
 }
