@@ -16,7 +16,7 @@ use std::collections::BTreeSet;
 use std::fs::read_to_string;
 use std::str::FromStr;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 struct Point {
     x: i32,
     y: i32,
@@ -76,6 +76,57 @@ impl Default for Rope {
     }
 }
 
+impl Rope {
+    fn move_rope(&mut self, movement: Movement) {
+        let new_head = Point::new(self.head.x + movement.x, self.head.y + movement.y);
+        while self.head != new_head {
+            self.head = Point::new(
+                self.head.x + movement.x.signum(),
+                self.head.y + movement.y.signum(),
+            );
+            let mut head_in_range = false;
+            for y in vec![-1, 0, 1] {
+                for x in vec![-1, 0, 1] {
+                    let point = Point::new(self.tail.x + x, self.tail.y + y);
+                    if point == self.head {
+                        head_in_range = true;
+                    }
+                }
+                if head_in_range {
+                    break;
+                }
+            }
+            if !head_in_range {
+                if self.head.x == self.tail.x {
+                    if self.head.y > self.tail.y {
+                        self.tail.y += 1;
+                    } else {
+                        self.tail.y -= 1;
+                    }
+                } else if self.head.y == self.tail.y {
+                    if self.head.x > self.tail.x {
+                        self.tail.x += 1;
+                    } else {
+                        self.tail.x -= 1;
+                    }
+                } else {
+                    if self.head.x > self.tail.x {
+                        self.tail.x += 1;
+                    } else {
+                        self.tail.x -= 1;
+                    }
+                    if self.head.y > self.tail.y {
+                        self.tail.y += 1;
+                    } else {
+                        self.tail.y -= 1;
+                    }
+                }
+                self.tail_visited.insert(self.tail);
+            }
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -128,5 +179,23 @@ mod tests {
             tail_visited,
         };
         assert_eq!(expected, Rope::default());
+    }
+
+    #[test]
+    fn test_rope_move() {
+        let mut rope = Rope::default();
+        rope.move_rope(Movement::from_str("R 4").expect("Unable to parse movement"));
+        assert_eq!(4, rope.tail_visited.len());
+        rope.move_rope(Movement::from_str("U 4").expect("Unable to parse movement"));
+        assert_eq!(7, rope.tail_visited.len());
+        rope.move_rope(Movement::from_str("L 3").expect("Unable to parse movement"));
+        println!("{:?}", rope.tail_visited);
+        assert_eq!(9, rope.tail_visited.len());
+        rope.move_rope(Movement::from_str("D 1").expect("Unable to parse movement"));
+        rope.move_rope(Movement::from_str("R 4").expect("Unable to parse movement"));
+        rope.move_rope(Movement::from_str("D 1").expect("Unable to parse movement"));
+        rope.move_rope(Movement::from_str("L 5").expect("Unable to parse movement"));
+        rope.move_rope(Movement::from_str("R 2").expect("Unable to parse movement"));
+        assert_eq!(13, rope.tail_visited.len());
     }
 }
