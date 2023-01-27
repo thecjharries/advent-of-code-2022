@@ -135,6 +135,27 @@ impl Rope {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+struct KnottedRope {
+    knots: Vec<Point>,
+    tail_visited: BTreeSet<Point>,
+}
+
+impl Default for KnottedRope {
+    fn default() -> Self {
+        let mut tail_visited = BTreeSet::new();
+        tail_visited.insert(Point::default());
+        let mut knots = Vec::new();
+        for _ in 0..10 {
+            knots.push(Point::default());
+        }
+        KnottedRope {
+            knots,
+            tail_visited,
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -225,5 +246,12 @@ mod tests {
             ",
         );
         assert_eq!(13, rope.tail_visited.len());
+    }
+
+    #[test]
+    fn test_default_knotted_rope() {
+        let knotted_rope = KnottedRope::default();
+        assert_eq!(10, knotted_rope.knots.len());
+        assert_eq!(1, knotted_rope.tail_visited.len());
     }
 }
