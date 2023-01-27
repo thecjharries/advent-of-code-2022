@@ -224,7 +224,9 @@ fn main() {
     let mut rope = Rope::default();
     rope.parse_movements(&input);
     println!("Part 1: {}", rope.tail_visited.len());
-    // println!("Part 2: {}", input);
+    let mut knotted_rope = KnottedRope::default();
+    knotted_rope.parse_movements(&input);
+    println!("Part 2: {}", knotted_rope.tail_visited.len());
 }
 
 #[cfg(not(tarpaulin_include))]
