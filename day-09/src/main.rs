@@ -125,6 +125,14 @@ impl Rope {
             }
         }
     }
+
+    fn parse_movements(&mut self, input: &str) {
+        let lines = input.trim().lines().collect::<Vec<&str>>();
+        for line in lines.iter() {
+            let movement = line.parse::<Movement>().unwrap();
+            self.move_rope(movement);
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -196,6 +204,24 @@ mod tests {
         rope.move_rope(Movement::from_str("D 1").expect("Unable to parse movement"));
         rope.move_rope(Movement::from_str("L 5").expect("Unable to parse movement"));
         rope.move_rope(Movement::from_str("R 2").expect("Unable to parse movement"));
+        assert_eq!(13, rope.tail_visited.len());
+    }
+
+    #[test]
+    fn test_rope_parse_movements() {
+        let mut rope = Rope::default();
+        rope.parse_movements(
+            "R 4
+            U 4
+            L 3
+            D 1
+            R 4
+            D 1
+            L 5
+            R 2
+
+            ",
+        );
         assert_eq!(13, rope.tail_visited.len());
     }
 }
