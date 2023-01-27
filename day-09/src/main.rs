@@ -21,6 +21,12 @@ struct Point {
     y: i32,
 }
 
+impl Point {
+    fn new(x: i32, y: i32) -> Point {
+        Point { x, y }
+    }
+}
+
 struct Rope {
     head: Point,
     tail: Point,
@@ -38,4 +44,10 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_new_point() {
+        let expected = Point { x: 1, y: 2 };
+        assert_eq!(expected, Point::new(1, 2));
+    }
 }
