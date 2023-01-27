@@ -156,6 +156,60 @@ impl Default for KnottedRope {
     }
 }
 
+impl KnottedRope {
+    fn move_rope(&mut self, movement: Movement) {
+        let new_head = Point::new(self.knots[0].x + movement.x, self.knots[0].y + movement.y);
+        while self.knots[0] != new_head {
+            self.knots[0] = Point::new(
+                self.knots[0].x + movement.x.signum(),
+                self.knots[0].y + movement.y.signum(),
+            );
+            for index in 1..self.knots.len() {
+                let mut in_range = false;
+                for y in vec![-1, 0, 1] {
+                    for x in vec![-1, 0, 1] {
+                        let point = Point::new(self.knots[index].x + x, self.knots[index].y + y);
+                        if point == self.knots[index - 1] {
+                            in_range = true;
+                            break;
+                        }
+                    }
+                    if in_range {
+                        break;
+                    }
+                }
+                if !in_range {
+                    if self.knots[index - 1].x == self.knots[index].x {
+                        if self.knots[index - 1].y > self.knots[index].y {
+                            self.knots[index].y += 1;
+                        } else {
+                            self.knots[index].y -= 1;
+                        }
+                    } else if self.knots[index - 1].y == self.knots[index].y {
+                        if self.knots[index - 1].x > self.knots[index].x {
+                            self.knots[index].x += 1;
+                        } else {
+                            self.knots[index].x -= 1;
+                        }
+                    } else {
+                        if self.knots[index - 1].x > self.knots[index].x {
+                            self.knots[index].x += 1;
+                        } else {
+                            self.knots[index].x -= 1;
+                        }
+                        if self.knots[index - 1].y > self.knots[index].y {
+                            self.knots[index].y += 1;
+                        } else {
+                            self.knots[index].y -= 1;
+                        }
+                    }
+                }
+            }
+            self.tail_visited.insert(self.knots[9]);
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -220,7 +274,6 @@ mod tests {
         rope.move_rope(Movement::from_str("U 4").expect("Unable to parse movement"));
         assert_eq!(7, rope.tail_visited.len());
         rope.move_rope(Movement::from_str("L 3").expect("Unable to parse movement"));
-        println!("{:?}", rope.tail_visited);
         assert_eq!(9, rope.tail_visited.len());
         rope.move_rope(Movement::from_str("D 1").expect("Unable to parse movement"));
         rope.move_rope(Movement::from_str("R 4").expect("Unable to parse movement"));
@@ -252,6 +305,21 @@ mod tests {
     fn test_default_knotted_rope() {
         let knotted_rope = KnottedRope::default();
         assert_eq!(10, knotted_rope.knots.len());
+        assert_eq!(1, knotted_rope.tail_visited.len());
+    }
+
+    #[test]
+    fn test_knotted_rope_move_rope() {
+        let mut knotted_rope = KnottedRope::default();
+        knotted_rope.move_rope(Movement::from_str("R 4").expect("Unable to parse movement"));
+        assert_eq!(1, knotted_rope.tail_visited.len());
+        knotted_rope.move_rope(Movement::from_str("U 4").expect("Unable to parse movement"));
+        knotted_rope.move_rope(Movement::from_str("L 3").expect("Unable to parse movement"));
+        knotted_rope.move_rope(Movement::from_str("D 1").expect("Unable to parse movement"));
+        knotted_rope.move_rope(Movement::from_str("R 4").expect("Unable to parse movement"));
+        knotted_rope.move_rope(Movement::from_str("D 1").expect("Unable to parse movement"));
+        knotted_rope.move_rope(Movement::from_str("L 5").expect("Unable to parse movement"));
+        knotted_rope.move_rope(Movement::from_str("R 2").expect("Unable to parse movement"));
         assert_eq!(1, knotted_rope.tail_visited.len());
     }
 }
