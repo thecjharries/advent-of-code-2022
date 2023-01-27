@@ -208,6 +208,14 @@ impl KnottedRope {
             self.tail_visited.insert(self.knots[9]);
         }
     }
+
+    fn parse_movements(&mut self, input: &str) {
+        let lines = input.trim().lines().collect::<Vec<&str>>();
+        for line in lines.iter() {
+            let movement = line.parse::<Movement>().unwrap();
+            self.move_rope(movement);
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -321,5 +329,38 @@ mod tests {
         knotted_rope.move_rope(Movement::from_str("L 5").expect("Unable to parse movement"));
         knotted_rope.move_rope(Movement::from_str("R 2").expect("Unable to parse movement"));
         assert_eq!(1, knotted_rope.tail_visited.len());
+    }
+
+    #[test]
+    fn test_knotted_rope_parse_movements() {
+        let mut knotted_rope = KnottedRope::default();
+        knotted_rope.parse_movements(
+            "R 4
+            U 4
+            L 3
+            D 1
+            R 4
+            D 1
+            L 5
+            R 2
+
+            ",
+        );
+        assert_eq!(1, knotted_rope.tail_visited.len());
+        knotted_rope = KnottedRope::default();
+        knotted_rope.parse_movements(
+            "
+
+        R 5
+        U 8
+        L 8
+        D 3
+        R 17
+        D 10
+        L 25
+        U 20
+        ",
+        );
+        assert_eq!(36, knotted_rope.tail_visited.len());
     }
 }
