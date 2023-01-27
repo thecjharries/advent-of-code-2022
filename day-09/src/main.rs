@@ -15,16 +15,10 @@
 use std::collections::BTreeSet;
 use std::fs::read_to_string;
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct Point {
     x: i32,
     y: i32,
-}
-
-impl Point {
-    fn new(x: i32, y: i32) -> Point {
-        Point { x, y }
-    }
 }
 
 impl Default for Point {
@@ -33,10 +27,29 @@ impl Default for Point {
     }
 }
 
+impl Point {
+    fn new(x: i32, y: i32) -> Point {
+        Point { x, y }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
 struct Rope {
     head: Point,
     tail: Point,
     tail_visited: BTreeSet<Point>,
+}
+
+impl Default for Rope {
+    fn default() -> Self {
+        let mut tail_visited = BTreeSet::new();
+        tail_visited.insert(Point::default());
+        Rope {
+            head: Point::default(),
+            tail: Point::default(),
+            tail_visited,
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -52,14 +65,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_default_point() {
+        let expected = Point { x: 0, y: 0 };
+        assert_eq!(expected, Point::default());
+    }
+
+    #[test]
     fn test_new_point() {
         let expected = Point { x: 1, y: 2 };
         assert_eq!(expected, Point::new(1, 2));
     }
 
     #[test]
-    fn test_default_point() {
-        let expected = Point { x: 0, y: 0 };
-        assert_eq!(expected, Point::default());
+    fn test_default_rope() {
+        let mut tail_visited = BTreeSet::new();
+        tail_visited.insert(Point::default());
+        let expected = Rope {
+            head: Point::default(),
+            tail: Point::default(),
+            tail_visited,
+        };
+        assert_eq!(expected, Rope::default());
     }
 }
