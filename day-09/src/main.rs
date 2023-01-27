@@ -138,7 +138,9 @@ impl Rope {
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
+    let mut rope = Rope::default();
+    rope.parse_movements(&input);
+    println!("Part 1: {}", rope.tail_visited.len());
     // println!("Part 2: {}", input);
 }
 
