@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::BTreeSet;
 use std::fs::read_to_string;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct Point {
     x: i32,
     y: i32,
+}
+
+struct Rope {
+    head: Point,
+    tail: Point,
+    tail_visited: BTreeSet<Point>,
 }
 
 #[cfg(not(tarpaulin_include))]
