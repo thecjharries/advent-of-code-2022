@@ -27,6 +27,12 @@ impl Point {
     }
 }
 
+impl Default for Point {
+    fn default() -> Self {
+        Point { x: 0, y: 0 }
+    }
+}
+
 struct Rope {
     head: Point,
     tail: Point,
@@ -49,5 +55,11 @@ mod tests {
     fn test_new_point() {
         let expected = Point { x: 1, y: 2 };
         assert_eq!(expected, Point::new(1, 2));
+    }
+
+    #[test]
+    fn test_default_point() {
+        let expected = Point { x: 0, y: 0 };
+        assert_eq!(expected, Point::default());
     }
 }
