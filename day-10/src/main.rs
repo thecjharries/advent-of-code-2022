@@ -49,6 +49,8 @@ struct Program {
     cycles: u32,
     x: i32,
     action_index: usize,
+    signal_strength: i32,
+    signal_checks: Vec<usize>,
 }
 
 impl Default for Program {
@@ -58,6 +60,8 @@ impl Default for Program {
             cycles: 0,
             x: 0,
             action_index: 0,
+            signal_strength: 0,
+            signal_checks: vec![20, 60, 100, 140, 180, 220],
         }
     }
 }
@@ -102,6 +106,8 @@ mod tests {
             cycles: 0,
             x: 0,
             action_index: 0,
+            signal_strength: 0,
+            signal_checks: vec![20, 60, 100, 140, 180, 220],
         };
         assert_eq!(expected_program, Program::default());
     }
@@ -121,6 +127,8 @@ mod tests {
             cycles: 0,
             x: 0,
             action_index: 0,
+            signal_strength: 0,
+            signal_checks: vec![20, 60, 100, 140, 180, 220],
         };
         assert_eq!(expected_program, program);
     }
