@@ -34,6 +34,17 @@ struct Program {
     action_index: usize,
 }
 
+impl Default for Program {
+    fn default() -> Self {
+        Program {
+            actions: vec![],
+            cycles: 0,
+            x: 0,
+            action_index: 0,
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -45,4 +56,15 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_default_program() {
+        let expected_program = Program {
+            actions: vec![],
+            cycles: 0,
+            x: 0,
+            action_index: 0,
+        };
+        assert_eq!(Program::default(), expected_program);
+    }
 }
