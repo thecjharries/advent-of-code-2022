@@ -110,7 +110,10 @@ impl Program {
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
+    let mut part1 = Program::default();
+    part1.parse_actions(&input);
+    part1.run();
+    println!("Part 1: {}", part1.signal_strength);
     // println!("Part 2: {}", input);
 }
 
