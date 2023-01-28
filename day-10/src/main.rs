@@ -14,6 +14,16 @@
 
 use std::fs::read_to_string;
 
+enum CycleTime {
+    Noop = 1,
+    Addx = 2,
+}
+
+enum Action {
+    Noop(i32),
+    Addx(i32),
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
