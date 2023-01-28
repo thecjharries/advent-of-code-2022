@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use std::fs::read_to_string;
+use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
 enum CycleTime {
@@ -24,6 +25,22 @@ enum CycleTime {
 enum Action {
     Noop(i32),
     Addx(i32),
+}
+
+impl FromStr for Action {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let mut split_input = input.trim().split_whitespace();
+        let action = split_input.next().unwrap();
+        match action {
+            "noop" => Ok(Action::Noop(0)),
+            "addx" => {
+                let value = split_input.next().unwrap().parse::<i32>().unwrap();
+                Ok(Action::Addx(value))
+            }
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -58,6 +75,17 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_noop_action_from_str() {
+        assert_eq!(Action::Noop(0), Action::from_str("noop").unwrap());
+    }
+
+    #[test]
+    fn test_addx_action_from_str() {
+        assert_eq!(Action::Addx(1), Action::from_str("addx 1").unwrap());
+        assert_eq!(Action::Addx(-10), Action::from_str("addx -10").unwrap());
+    }
+
+    #[test]
     fn test_default_program() {
         let expected_program = Program {
             actions: vec![],
@@ -65,6 +93,6 @@ mod tests {
             x: 0,
             action_index: 0,
         };
-        assert_eq!(Program::default(), expected_program);
+        assert_eq!(expected_program, Program::default());
     }
 }
