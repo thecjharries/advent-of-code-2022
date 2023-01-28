@@ -130,7 +130,10 @@ fn main() {
     part1.parse_actions(&input);
     part1.run();
     println!("Part 1: {}", part1.signal_strength);
-    // println!("Part 2: {}", input);
+    println!("Part 2:");
+    for line in part1.crt {
+        println!("{}", line);
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
