@@ -53,6 +53,7 @@ struct Program {
     signal_checks: Vec<usize>,
     crt: Vec<String>,
     crt_index: usize,
+    crt_lines: Vec<u32>,
 }
 
 impl Default for Program {
@@ -66,6 +67,7 @@ impl Default for Program {
             signal_checks: vec![20, 60, 100, 140, 180, 220],
             crt: vec!["".to_string(); 6],
             crt_index: 0,
+            crt_lines: vec![40, 80, 120, 160, 200],
         }
     }
 }
@@ -85,9 +87,18 @@ impl Program {
             Some(action) => action,
             None => return,
         };
+        if self.x - 2 < (self.cycles as i32 - 40 * self.crt_index as i32)
+            && (self.cycles as i32 - 40 * self.crt_index as i32) < self.x + 2
+        {
+            self.crt[self.crt_index].push('#');
+        } else {
+            self.crt[self.crt_index].push('.');
+        }
         self.cycles += 1;
         if self.signal_checks.contains(&(self.cycles as usize)) {
             self.signal_strength += self.x * self.cycles as i32;
+        }
+        if self.crt_lines.contains(&self.cycles) {
             self.crt_index += 1;
         }
         let cycle_time = match action {
@@ -154,6 +165,7 @@ mod tests {
             signal_checks: vec![20, 60, 100, 140, 180, 220],
             crt: vec!["".to_string(); 6],
             crt_index: 0,
+            crt_lines: vec![40, 80, 120, 160, 200],
         };
         assert_eq!(expected_program, Program::default());
     }
@@ -177,6 +189,7 @@ mod tests {
             signal_checks: vec![20, 60, 100, 140, 180, 220],
             crt: vec!["".to_string(); 6],
             crt_index: 0,
+            crt_lines: vec![40, 80, 120, 160, 200],
         };
         assert_eq!(expected_program, program);
     }
@@ -373,10 +386,15 @@ mod tests {
 
             ",
         );
-        for action in program.actions.iter().rev() {
-            println!("{:?}", action);
-        }
         program.run();
         assert_eq!(13140, program.signal_strength);
+        let expected_crt = "##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######....."
+            .to_string();
+        assert_eq!(expected_crt, program.crt.join("\n"));
     }
 }
