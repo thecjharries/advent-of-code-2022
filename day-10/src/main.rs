@@ -76,13 +76,29 @@ impl Program {
         self.actions.reverse();
     }
 
-    // fn run_cycle(&mut self) {
-    //     let action = self.actions.peek().unwrap();
-    //     let cycle_time = match action {
-    //         Action::Noop(_) => CycleTime::Noop,
-    //         Action::Addx(_) => CycleTime::Addx,
-    //     };
-    // }
+    fn run_cycle(&mut self) {
+        let action = match self.actions.pop() {
+            Some(action) => action,
+            None => return,
+        };
+        let cycle_time = match action {
+            Action::Noop(_) => CycleTime::Noop,
+            Action::Addx(_) => CycleTime::Addx,
+        };
+        self.cycles += 1;
+        if self.cycles == self.previous_action_cycle + cycle_time as u32 {
+            self.previous_action_cycle = self.cycles;
+            match action {
+                Action::Noop(_) => {}
+                Action::Addx(value) => self.x += value,
+            }
+        } else {
+            self.actions.push(action);
+        }
+        if self.signal_checks.contains(&(self.cycles as usize)) {
+            self.signal_strength += self.x * self.cycles as i32;
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -140,5 +156,44 @@ mod tests {
             signal_checks: vec![20, 60, 100, 140, 180, 220],
         };
         assert_eq!(expected_program, program);
+    }
+
+    #[test]
+    fn test_program_run_cycle() {
+        let mut program = Program::default();
+        program.parse_actions(
+            "noop
+            addx 3
+            addx -5
+
+            ",
+        );
+        assert_eq!(0, program.cycles);
+        assert_eq!(0, program.x);
+        assert_eq!(3, program.actions.len());
+        program.run_cycle();
+        assert_eq!(1, program.cycles);
+        assert_eq!(0, program.x);
+        assert_eq!(2, program.actions.len());
+        program.run_cycle();
+        assert_eq!(2, program.cycles);
+        assert_eq!(0, program.x);
+        assert_eq!(2, program.actions.len());
+        program.run_cycle();
+        assert_eq!(3, program.cycles);
+        assert_eq!(3, program.x);
+        assert_eq!(1, program.actions.len());
+        program.run_cycle();
+        assert_eq!(4, program.cycles);
+        assert_eq!(3, program.x);
+        assert_eq!(1, program.actions.len());
+        program.run_cycle();
+        assert_eq!(5, program.cycles);
+        assert_eq!(-2, program.x);
+        assert_eq!(0, program.actions.len());
+        program.run_cycle();
+        assert_eq!(5, program.cycles);
+        assert_eq!(-2, program.x);
+        assert_eq!(0, program.actions.len());
     }
 }
