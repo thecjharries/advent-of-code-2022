@@ -58,7 +58,7 @@ impl Default for Program {
         Program {
             actions: vec![],
             cycles: 0,
-            x: 0,
+            x: 1,
             previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
@@ -98,6 +98,13 @@ impl Program {
         if self.signal_checks.contains(&(self.cycles as usize)) {
             self.signal_strength += self.x * self.cycles as i32;
         }
+        println!("{}: {}", self.cycles, self.x);
+    }
+
+    fn run(&mut self) {
+        while !self.actions.is_empty() {
+            self.run_cycle();
+        }
     }
 }
 
@@ -129,7 +136,7 @@ mod tests {
         let expected_program = Program {
             actions: vec![],
             cycles: 0,
-            x: 0,
+            x: 1,
             previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
@@ -150,7 +157,7 @@ mod tests {
         let expected_program = Program {
             actions: vec![Action::Addx(-5), Action::Addx(3), Action::Noop(0)],
             cycles: 0,
-            x: 0,
+            x: 1,
             previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
@@ -169,31 +176,206 @@ mod tests {
             ",
         );
         assert_eq!(0, program.cycles);
-        assert_eq!(0, program.x);
+        assert_eq!(1, program.x);
         assert_eq!(3, program.actions.len());
         program.run_cycle();
         assert_eq!(1, program.cycles);
-        assert_eq!(0, program.x);
+        assert_eq!(1, program.x);
         assert_eq!(2, program.actions.len());
         program.run_cycle();
         assert_eq!(2, program.cycles);
-        assert_eq!(0, program.x);
+        assert_eq!(1, program.x);
         assert_eq!(2, program.actions.len());
         program.run_cycle();
         assert_eq!(3, program.cycles);
-        assert_eq!(3, program.x);
+        assert_eq!(4, program.x);
         assert_eq!(1, program.actions.len());
         program.run_cycle();
         assert_eq!(4, program.cycles);
-        assert_eq!(3, program.x);
+        assert_eq!(4, program.x);
         assert_eq!(1, program.actions.len());
         program.run_cycle();
         assert_eq!(5, program.cycles);
-        assert_eq!(-2, program.x);
+        assert_eq!(-1, program.x);
         assert_eq!(0, program.actions.len());
         program.run_cycle();
         assert_eq!(5, program.cycles);
-        assert_eq!(-2, program.x);
+        assert_eq!(-1, program.x);
         assert_eq!(0, program.actions.len());
+    }
+
+    #[test]
+    fn test_program_run() {
+        let mut program = Program::default();
+        // program.parse_actions(
+        //     "addx 15
+        //     addx -11
+        //     addx 6
+        //     addx -3
+        //     addx 5
+        //     addx -1
+        //     addx -8
+        //     addx 13
+        //     addx 4
+        //     noop
+        //     addx -1
+        //     addx 5
+        //     addx -1
+        //     addx 5
+        //     addx -1
+        //     addx 5
+        //     addx -1
+        //     addx 5
+        //     addx -1
+        //     addx -35
+        //     addx 1
+        //     addx 24
+        //     addx -19
+        //     addx 1
+        //     addx 16
+        //     addx -11
+        //     noop
+        //     noop
+        //     addx 21
+        //     addx -15
+        //     noop
+        //     noop
+        //     addx -3
+        //     addx 9
+        //     addx 1
+        //     addx -3
+        //     addx 8
+        //     addx 1
+        //     addx 5
+        //     noop
+        //     noop
+        //     noop
+        //     noop
+        //     noop
+        //     addx -36
+        //     noop
+        //     addx 1
+        //     addx 7
+        //     noop
+        //     noop
+        //     noop
+        //     addx 2
+        //     addx 6
+        //     noop
+        //     noop
+        //     noop
+        //     noop
+        //     noop
+        //     addx 1
+        //     noop
+        //     noop
+        //     addx 7
+        //     addx 1
+        //     noop
+        //     addx -13
+        //     addx 13
+        //     addx 7
+        //     noop
+        //     addx 1
+        //     addx -33
+        //     noop
+        //     noop
+        //     noop
+        //     addx 2
+        //     noop
+        //     noop
+        //     noop
+        //     addx 8
+        //     noop
+        //     addx -1
+        //     addx 2
+        //     addx 1
+        //     noop
+        //     addx 17
+        //     addx -9
+        //     addx 1
+        //     addx 1
+        //     addx -3
+        //     addx 11
+        //     noop
+        //     noop
+        //     addx 1
+        //     noop
+        //     addx 1
+        //     noop
+        //     noop
+        //     addx -13
+        //     addx -19
+        //     addx 1
+        //     addx 3
+        //     addx 26
+        //     addx -30
+        //     addx 12
+        //     addx -1
+        //     addx 3
+        //     addx 1
+        //     noop
+        //     noop
+        //     noop
+        //     addx -9
+        //     addx 18
+        //     addx 1
+        //     addx 2
+        //     noop
+        //     noop
+        //     addx 9
+        //     noop
+        //     noop
+        //     noop
+        //     addx -1
+        //     addx 2
+        //     addx -37
+        //     addx 1
+        //     addx 3
+        //     noop
+        //     addx 15
+        //     addx -21
+        //     addx 22
+        //     addx -6
+        //     addx 1
+        //     noop
+        //     addx 2
+        //     addx 1
+        //     noop
+        //     addx -10
+        //     noop
+        //     noop
+        //     addx 20
+        //     addx 1
+        //     addx 2
+        //     addx 2
+        //     addx -6
+        //     addx -11
+        //     noop
+        //     noop
+        //     noop
+
+        //     ",
+        // );
+        program.parse_actions(
+            "addx 15
+            addx -11
+            addx 6
+            addx -3
+            addx 5
+            addx -1
+            addx -8
+            addx 13
+            addx 4
+            noop
+            addx -1
+            addx 5
+            addx -1
+
+            ",
+        );
+        program.run();
+        assert_eq!(420, program.signal_strength);
+        // assert_eq!(13140, program.signal_strength);
     }
 }
