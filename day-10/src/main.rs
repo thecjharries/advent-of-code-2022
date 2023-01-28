@@ -14,14 +14,24 @@
 
 use std::fs::read_to_string;
 
+#[derive(Debug, PartialEq)]
 enum CycleTime {
     Noop = 1,
     Addx = 2,
 }
 
+#[derive(Debug, PartialEq)]
 enum Action {
     Noop(i32),
     Addx(i32),
+}
+
+#[derive(Debug, PartialEq)]
+struct Program {
+    actions: Vec<Action>,
+    cycles: u32,
+    x: i32,
+    action_index: usize,
 }
 
 #[cfg(not(tarpaulin_include))]
