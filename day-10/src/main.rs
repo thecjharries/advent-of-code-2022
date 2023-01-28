@@ -51,6 +51,8 @@ struct Program {
     previous_action_cycle: u32,
     signal_strength: i32,
     signal_checks: Vec<usize>,
+    crt: Vec<String>,
+    crt_index: usize,
 }
 
 impl Default for Program {
@@ -62,6 +64,8 @@ impl Default for Program {
             previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
+            crt: vec!["".to_string(); 6],
+            crt_index: 0,
         }
     }
 }
@@ -84,6 +88,7 @@ impl Program {
         self.cycles += 1;
         if self.signal_checks.contains(&(self.cycles as usize)) {
             self.signal_strength += self.x * self.cycles as i32;
+            self.crt_index += 1;
         }
         let cycle_time = match action {
             Action::Noop(_) => CycleTime::Noop,
@@ -147,6 +152,8 @@ mod tests {
             previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
+            crt: vec!["".to_string(); 6],
+            crt_index: 0,
         };
         assert_eq!(expected_program, Program::default());
     }
@@ -168,6 +175,8 @@ mod tests {
             previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
+            crt: vec!["".to_string(); 6],
+            crt_index: 0,
         };
         assert_eq!(expected_program, program);
     }
