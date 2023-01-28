@@ -73,10 +73,11 @@ impl Program {
             .lines()
             .map(|action| action.parse::<Action>().unwrap())
             .collect();
+        self.actions.reverse();
     }
 
     // fn run_cycle(&mut self) {
-    //     let action = self.actions[self.action_index].clone();
+    //     let action = self.actions.peek().unwrap();
     //     let cycle_time = match action {
     //         Action::Noop(_) => CycleTime::Noop,
     //         Action::Addx(_) => CycleTime::Addx,
@@ -131,7 +132,7 @@ mod tests {
             ",
         );
         let expected_program = Program {
-            actions: vec![Action::Noop(0), Action::Addx(3), Action::Addx(-5)],
+            actions: vec![Action::Addx(-5), Action::Addx(3), Action::Noop(0)],
             cycles: 0,
             x: 0,
             previous_action_cycle: 0,
