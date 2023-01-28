@@ -134,6 +134,11 @@ mod tests {
     }
 
     #[test]
+    fn test_err_action_from_str() {
+        assert!(Action::from_str("addq").is_err());
+    }
+
+    #[test]
     fn test_default_program() {
         let expected_program = Program {
             actions: vec![],
