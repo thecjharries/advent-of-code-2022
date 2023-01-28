@@ -48,7 +48,7 @@ struct Program {
     actions: Vec<Action>,
     cycles: u32,
     x: i32,
-    action_index: usize,
+    previous_action_cycle: u32,
     signal_strength: i32,
     signal_checks: Vec<usize>,
 }
@@ -59,7 +59,7 @@ impl Default for Program {
             actions: vec![],
             cycles: 0,
             x: 0,
-            action_index: 0,
+            previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
         }
@@ -74,6 +74,14 @@ impl Program {
             .map(|action| action.parse::<Action>().unwrap())
             .collect();
     }
+
+    // fn run_cycle(&mut self) {
+    //     let action = self.actions[self.action_index].clone();
+    //     let cycle_time = match action {
+    //         Action::Noop(_) => CycleTime::Noop,
+    //         Action::Addx(_) => CycleTime::Addx,
+    //     };
+    // }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -105,7 +113,7 @@ mod tests {
             actions: vec![],
             cycles: 0,
             x: 0,
-            action_index: 0,
+            previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
         };
@@ -126,7 +134,7 @@ mod tests {
             actions: vec![Action::Noop(0), Action::Addx(3), Action::Addx(-5)],
             cycles: 0,
             x: 0,
-            action_index: 0,
+            previous_action_cycle: 0,
             signal_strength: 0,
             signal_checks: vec![20, 60, 100, 140, 180, 220],
         };
