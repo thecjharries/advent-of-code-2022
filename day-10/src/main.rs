@@ -62,6 +62,16 @@ impl Default for Program {
     }
 }
 
+impl Program {
+    fn parse_actions(&mut self, input: &str) {
+        self.actions = input
+            .trim()
+            .lines()
+            .map(|action| action.parse::<Action>().unwrap())
+            .collect();
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -94,5 +104,24 @@ mod tests {
             action_index: 0,
         };
         assert_eq!(expected_program, Program::default());
+    }
+
+    #[test]
+    fn test_parse_actions() {
+        let mut program = Program::default();
+        program.parse_actions(
+            "noop
+            addx 3
+            addx -5
+
+            ",
+        );
+        let expected_program = Program {
+            actions: vec![Action::Noop(0), Action::Addx(3), Action::Addx(-5)],
+            cycles: 0,
+            x: 0,
+            action_index: 0,
+        };
+        assert_eq!(expected_program, program);
     }
 }
