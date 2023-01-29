@@ -14,6 +14,13 @@
 
 use std::fs::read_to_string;
 
+#[derive(Debug)]
+struct Monkey {
+    starting_items: Vec<u32>,
+    operation: fn(u32) -> u32,
+    test: fn(u32, usize, usize) -> (usize, u32),
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
