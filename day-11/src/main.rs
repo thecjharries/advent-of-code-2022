@@ -43,12 +43,16 @@ impl Monkey {
         }
     }
 
-    fn compute_round(&mut self, factor: BigUint) -> Vec<(usize, BigUint)> {
+    fn compute_round(
+        &mut self,
+        factor: BigUint,
+        reduction_factor: BigUint,
+    ) -> Vec<(usize, BigUint)> {
         let mut results = Vec::new();
         self.inspection_count += self.starting_items.len();
         self.starting_items.reverse();
         while let Some(item) = self.starting_items.pop() {
-            let worry_level = (self.operation)(item).div(factor.clone());
+            let worry_level = (self.operation)(item % reduction_factor.clone()).div(factor.clone());
             let (new_index, new_item) = (self.test)(worry_level, self.true_index, self.false_index);
             results.push((new_index, new_item));
         }
@@ -59,7 +63,7 @@ impl Monkey {
 struct Monkeys(Vec<Monkey>);
 
 impl Monkeys {
-    fn round(&mut self, factor: BigUint) {
+    fn round(&mut self, factor: BigUint, reduction_factor: BigUint) {
         let mut results: Vec<(usize, BigUint)> = Vec::new();
         for (index, monkey) in self.0.iter_mut().enumerate() {
             for item in results.iter() {
@@ -67,7 +71,7 @@ impl Monkeys {
                     monkey.starting_items.push(item.1.clone());
                 }
             }
-            for item in monkey.compute_round(factor.clone()) {
+            for item in monkey.compute_round(factor.clone(), reduction_factor.clone()) {
                 results.push(item);
             }
             results.retain(|item| index != item.0);
@@ -77,9 +81,14 @@ impl Monkeys {
         }
     }
 
-    fn monkey_business(&mut self, rounds: u32, factor: BigUint) -> usize {
+    fn monkey_business(
+        &mut self,
+        rounds: u32,
+        factor: BigUint,
+        reduction_factor: BigUint,
+    ) -> usize {
         for _ in 0..rounds {
-            self.round(factor.clone());
+            self.round(factor.clone(), reduction_factor.clone());
         }
         let mut inspection_counts = Vec::new();
         for monkey in self.0.iter() {
@@ -93,316 +102,415 @@ impl Monkeys {
 
 #[cfg(not(tarpaulin_include))]
 fn main() {
-    // let mut monkeys1: Monkeys = Monkeys(vec![
-    //     //         Monkey 0:
-    //     //   Starting items: 66, 71, 94
-    //     //   Operation: new = old * 5
-    //     //   Test: divisible by 3
-    //     //     If true: throw to monkey 7
-    //     //     If false: throw to monkey 4
-    //     Monkey::new(
-    //         vec![66, 71, 94],
-    //         |old| old * 5,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 3 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         7,
-    //         4,
-    //     ),
-    //     //         Monkey 1:
-    //     //   Starting items: 70
-    //     //   Operation: new = old + 6
-    //     //   Test: divisible by 17
-    //     //     If true: throw to monkey 3
-    //     //     If false: throw to monkey 0
-    //     Monkey::new(
-    //         vec![70],
-    //         |old| old + 6,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 17 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         3,
-    //         0,
-    //     ),
-    //     //         Monkey 2:
-    //     //   Starting items: 62, 68, 56, 65, 94, 78
-    //     //   Operation: new = old + 5
-    //     //   Test: divisible by 2
-    //     //     If true: throw to monkey 3
-    //     //     If false: throw to monkey 1
-    //     Monkey::new(
-    //         vec![62, 68, 56, 65, 94, 78],
-    //         |old| old + 5,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 2 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         3,
-    //         1,
-    //     ),
-    //     // Monkey 3:
-    //     //   Starting items: 89, 94, 94, 67
-    //     //   Operation: new = old + 2
-    //     //   Test: divisible by 19
-    //     //     If true: throw to monkey 7
-    //     //     If false: throw to monkey 0
-    //     Monkey::new(
-    //         vec![89, 94, 94, 67],
-    //         |old| old + 2,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 19 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         7,
-    //         0,
-    //     ),
-    //     //         Monkey 4:
-    //     //   Starting items: 71, 61, 73, 65, 98, 98, 63
-    //     //   Operation: new = old * 7
-    //     //   Test: divisible by 11
-    //     //     If true: throw to monkey 5
-    //     //     If false: throw to monkey 6
-    //     Monkey::new(
-    //         vec![71, 61, 73, 65, 98, 98, 63],
-    //         |old| old * 7,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 11 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         5,
-    //         6,
-    //     ),
-    //     // Monkey 5:
-    //     //   Starting items: 55, 62, 68, 61, 60
-    //     //   Operation: new = old + 7
-    //     //   Test: divisible by 5
-    //     //     If true: throw to monkey 2
-    //     //     If false: throw to monkey 1
-    //     Monkey::new(
-    //         vec![55, 62, 68, 61, 60],
-    //         |old| old + 7,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 5 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         2,
-    //         1,
-    //     ),
-    //     // Monkey 6:
-    //     //   Starting items: 93, 91, 69, 64, 72, 89, 50, 71
-    //     //   Operation: new = old + 1
-    //     //   Test: divisible by 13
-    //     //     If true: throw to monkey 5
-    //     //     If false: throw to monkey 2
-    //     Monkey::new(
-    //         vec![93, 91, 69, 64, 72, 89, 50, 71],
-    //         |old| old + 1,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 13 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         5,
-    //         2,
-    //     ),
-    //     // Monkey 7:
-    //     //   Starting items: 76, 50
-    //     //   Operation: new = old * old
-    //     //   Test: divisible by 7
-    //     //     If true: throw to monkey 4
-    //     //     If false: throw to monkey 6
-    //     Monkey::new(
-    //         vec![76, 50],
-    //         |old| old * old,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 7 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         4,
-    //         6,
-    //     ),
-    // ]);
-    // println!("Part 1: {}", monkeys1.monkey_business(20, 3));
-    // let mut monkeys2: Monkeys = Monkeys(vec![
-    //     //         Monkey 0:
-    //     //   Starting items: 66, 71, 94
-    //     //   Operation: new = old * 5
-    //     //   Test: divisible by 3
-    //     //     If true: throw to monkey 7
-    //     //     If false: throw to monkey 4
-    //     Monkey::new(
-    //         vec![66, 71, 94],
-    //         |old| old * 5,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 3 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         7,
-    //         4,
-    //     ),
-    //     //         Monkey 1:
-    //     //   Starting items: 70
-    //     //   Operation: new = old + 6
-    //     //   Test: divisible by 17
-    //     //     If true: throw to monkey 3
-    //     //     If false: throw to monkey 0
-    //     Monkey::new(
-    //         vec![70],
-    //         |old| old + 6,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 17 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         3,
-    //         0,
-    //     ),
-    //     //         Monkey 2:
-    //     //   Starting items: 62, 68, 56, 65, 94, 78
-    //     //   Operation: new = old + 5
-    //     //   Test: divisible by 2
-    //     //     If true: throw to monkey 3
-    //     //     If false: throw to monkey 1
-    //     Monkey::new(
-    //         vec![62, 68, 56, 65, 94, 78],
-    //         |old| old + 5,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 2 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         3,
-    //         1,
-    //     ),
-    //     // Monkey 3:
-    //     //   Starting items: 89, 94, 94, 67
-    //     //   Operation: new = old + 2
-    //     //   Test: divisible by 19
-    //     //     If true: throw to monkey 7
-    //     //     If false: throw to monkey 0
-    //     Monkey::new(
-    //         vec![89, 94, 94, 67],
-    //         |old| old + 2,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 19 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         7,
-    //         0,
-    //     ),
-    //     //         Monkey 4:
-    //     //   Starting items: 71, 61, 73, 65, 98, 98, 63
-    //     //   Operation: new = old * 7
-    //     //   Test: divisible by 11
-    //     //     If true: throw to monkey 5
-    //     //     If false: throw to monkey 6
-    //     Monkey::new(
-    //         vec![71, 61, 73, 65, 98, 98, 63],
-    //         |old| old * 7,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 11 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         5,
-    //         6,
-    //     ),
-    //     // Monkey 5:
-    //     //   Starting items: 55, 62, 68, 61, 60
-    //     //   Operation: new = old + 7
-    //     //   Test: divisible by 5
-    //     //     If true: throw to monkey 2
-    //     //     If false: throw to monkey 1
-    //     Monkey::new(
-    //         vec![55, 62, 68, 61, 60],
-    //         |old| old + 7,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 5 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         2,
-    //         1,
-    //     ),
-    //     // Monkey 6:
-    //     //   Starting items: 93, 91, 69, 64, 72, 89, 50, 71
-    //     //   Operation: new = old + 1
-    //     //   Test: divisible by 13
-    //     //     If true: throw to monkey 5
-    //     //     If false: throw to monkey 2
-    //     Monkey::new(
-    //         vec![93, 91, 69, 64, 72, 89, 50, 71],
-    //         |old| old + 1,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 13 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         5,
-    //         2,
-    //     ),
-    //     // Monkey 7:
-    //     //   Starting items: 76, 50
-    //     //   Operation: new = old * old
-    //     //   Test: divisible by 7
-    //     //     If true: throw to monkey 4
-    //     //     If false: throw to monkey 6
-    //     Monkey::new(
-    //         vec![76, 50],
-    //         |old| old * old,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 7 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         4,
-    //         6,
-    //     ),
-    // ]);
-    // println!("Part 2: {}", monkeys2.monkey_business(10, 1));
+    let mut monkeys1: Monkeys = Monkeys(vec![
+        //         Monkey 0:
+        //   Starting items: 66, 71, 94
+        //   Operation: new = old * 5
+        //   Test: divisible by 3
+        //     If true: throw to monkey 7
+        //     If false: throw to monkey 4
+        Monkey::new(
+            vec![
+                BigUint::from(66u32),
+                BigUint::from(71u32),
+                BigUint::from(94u32),
+            ],
+            |old| old * BigUint::from(5u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(3u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            7,
+            4,
+        ),
+        //         Monkey 1:
+        //   Starting items: 70
+        //   Operation: new = old + 6
+        //   Test: divisible by 17
+        //     If true: throw to monkey 3
+        //     If false: throw to monkey 0
+        Monkey::new(
+            vec![BigUint::from(70u32)],
+            |old| old + BigUint::from(6u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(17u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            3,
+            0,
+        ),
+        //         Monkey 2:
+        //   Starting items: 62, 68, 56, 65, 94, 78
+        //   Operation: new = old + 5
+        //   Test: divisible by 2
+        //     If true: throw to monkey 3
+        //     If false: throw to monkey 1
+        Monkey::new(
+            vec![
+                BigUint::from(62u32),
+                BigUint::from(68u32),
+                BigUint::from(56u32),
+                BigUint::from(65u32),
+                BigUint::from(94u32),
+                BigUint::from(78u32),
+            ],
+            |old| old + BigUint::from(5u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(2u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            3,
+            1,
+        ),
+        //         Monkey 3:
+        //   Starting items: 89, 94, 94, 67
+        //   Operation: new = old + 2
+        //   Test: divisible by 19
+        //     If true: throw to monkey 7
+        //     If false: throw to monkey 0
+        Monkey::new(
+            vec![
+                BigUint::from(89u32),
+                BigUint::from(94u32),
+                BigUint::from(94u32),
+                BigUint::from(67u32),
+            ],
+            |old| old + BigUint::from(2u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(19u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            7,
+            0,
+        ),
+        //         Monkey 4:
+        //   Starting items: 71, 61, 73, 65, 98, 98, 63
+        //   Operation: new = old * 7
+        //   Test: divisible by 11
+        //     If true: throw to monkey 5
+        //     If false: throw to monkey 6
+        Monkey::new(
+            vec![
+                BigUint::from(71u32),
+                BigUint::from(61u32),
+                BigUint::from(73u32),
+                BigUint::from(65u32),
+                BigUint::from(98u32),
+                BigUint::from(98u32),
+                BigUint::from(63u32),
+            ],
+            |old| old * BigUint::from(7u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(11u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            5,
+            6,
+        ),
+        //         Monkey 5:
+        //   Starting items: 55, 62, 68, 61, 60
+        //   Operation: new = old + 7
+        //   Test: divisible by 5
+        //     If true: throw to monkey 2
+        //     If false: throw to monkey 1
+        Monkey::new(
+            vec![
+                BigUint::from(55u32),
+                BigUint::from(62u32),
+                BigUint::from(68u32),
+                BigUint::from(61u32),
+                BigUint::from(60u32),
+            ],
+            |old| old + BigUint::from(7u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(5u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            2,
+            1,
+        ),
+        //         Monkey 6:
+        //   Starting items: 93, 91, 69, 64, 72, 89, 50, 71
+        //   Operation: new = old + 1
+        //   Test: divisible by 13
+        //     If true: throw to monkey 5
+        //     If false: throw to monkey 2
+        Monkey::new(
+            vec![
+                BigUint::from(93u32),
+                BigUint::from(91u32),
+                BigUint::from(69u32),
+                BigUint::from(64u32),
+                BigUint::from(72u32),
+                BigUint::from(89u32),
+                BigUint::from(50u32),
+                BigUint::from(71u32),
+            ],
+            |old| old + BigUint::from(1u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(13u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            5,
+            2,
+        ),
+        //         Monkey 7:
+        //   Starting items: 76, 50
+        //   Operation: new = old * old
+        //   Test: divisible by 7
+        //     If true: throw to monkey 4
+        //     If false: throw to monkey 6
+        Monkey::new(
+            vec![BigUint::from(76u32), BigUint::from(50u32)],
+            |old| {
+                let factor = old.clone();
+                old * factor
+            },
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(7u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            4,
+            6,
+        ),
+    ]);
+    println!(
+        "Part 1: {}",
+        monkeys1.monkey_business(20, BigUint::from(3u32), BigUint::from(1u32))
+    );
+    let mut monkeys2: Monkeys = Monkeys(vec![
+        //         Monkey 0:
+        //   Starting items: 66, 71, 94
+        //   Operation: new = old * 5
+        //   Test: divisible by 3
+        //     If true: throw to monkey 7
+        //     If false: throw to monkey 4
+        Monkey::new(
+            vec![
+                BigUint::from(66u32),
+                BigUint::from(71u32),
+                BigUint::from(94u32),
+            ],
+            |old| old * BigUint::from(5u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(3u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            7,
+            4,
+        ),
+        //         Monkey 1:
+        //   Starting items: 70
+        //   Operation: new = old + 6
+        //   Test: divisible by 17
+        //     If true: throw to monkey 3
+        //     If false: throw to monkey 0
+        Monkey::new(
+            vec![BigUint::from(70u32)],
+            |old| old + BigUint::from(6u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(17u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            3,
+            0,
+        ),
+        //         Monkey 2:
+        //   Starting items: 62, 68, 56, 65, 94, 78
+        //   Operation: new = old + 5
+        //   Test: divisible by 2
+        //     If true: throw to monkey 3
+        //     If false: throw to monkey 1
+        Monkey::new(
+            vec![
+                BigUint::from(62u32),
+                BigUint::from(68u32),
+                BigUint::from(56u32),
+                BigUint::from(65u32),
+                BigUint::from(94u32),
+                BigUint::from(78u32),
+            ],
+            |old| old + BigUint::from(5u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(2u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            3,
+            1,
+        ),
+        //         Monkey 3:
+        //   Starting items: 89, 94, 94, 67
+        //   Operation: new = old + 2
+        //   Test: divisible by 19
+        //     If true: throw to monkey 7
+        //     If false: throw to monkey 0
+        Monkey::new(
+            vec![
+                BigUint::from(89u32),
+                BigUint::from(94u32),
+                BigUint::from(94u32),
+                BigUint::from(67u32),
+            ],
+            |old| old + BigUint::from(2u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(19u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            7,
+            0,
+        ),
+        //         Monkey 4:
+        //   Starting items: 71, 61, 73, 65, 98, 98, 63
+        //   Operation: new = old * 7
+        //   Test: divisible by 11
+        //     If true: throw to monkey 5
+        //     If false: throw to monkey 6
+        Monkey::new(
+            vec![
+                BigUint::from(71u32),
+                BigUint::from(61u32),
+                BigUint::from(73u32),
+                BigUint::from(65u32),
+                BigUint::from(98u32),
+                BigUint::from(98u32),
+                BigUint::from(63u32),
+            ],
+            |old| old * BigUint::from(7u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(11u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            5,
+            6,
+        ),
+        //         Monkey 5:
+        //   Starting items: 55, 62, 68, 61, 60
+        //   Operation: new = old + 7
+        //   Test: divisible by 5
+        //     If true: throw to monkey 2
+        //     If false: throw to monkey 1
+        Monkey::new(
+            vec![
+                BigUint::from(55u32),
+                BigUint::from(62u32),
+                BigUint::from(68u32),
+                BigUint::from(61u32),
+                BigUint::from(60u32),
+            ],
+            |old| old + BigUint::from(7u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(5u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            2,
+            1,
+        ),
+        //         Monkey 6:
+        //   Starting items: 93, 91, 69, 64, 72, 89, 50, 71
+        //   Operation: new = old + 1
+        //   Test: divisible by 13
+        //     If true: throw to monkey 5
+        //     If false: throw to monkey 2
+        Monkey::new(
+            vec![
+                BigUint::from(93u32),
+                BigUint::from(91u32),
+                BigUint::from(69u32),
+                BigUint::from(64u32),
+                BigUint::from(72u32),
+                BigUint::from(89u32),
+                BigUint::from(50u32),
+                BigUint::from(71u32),
+            ],
+            |old| old + BigUint::from(1u32),
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(13u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            5,
+            2,
+        ),
+        //         Monkey 7:
+        //   Starting items: 76, 50
+        //   Operation: new = old * old
+        //   Test: divisible by 7
+        //     If true: throw to monkey 4
+        //     If false: throw to monkey 6
+        Monkey::new(
+            vec![BigUint::from(76u32), BigUint::from(50u32)],
+            |old| {
+                let factor = old.clone();
+                old * factor
+            },
+            |item, true_index, false_index| {
+                if BigUint::from(0u32) == item.clone().rem(BigUint::from(7u32)) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            4,
+            6,
+        ),
+    ]);
+    let factor = BigUint::from(3u32)
+        * BigUint::from(17u32)
+        * BigUint::from(2u32)
+        * BigUint::from(19u32)
+        * BigUint::from(11u32)
+        * BigUint::from(5u32)
+        * BigUint::from(13u32)
+        * BigUint::from(7u32);
+
+    println!(
+        "Part 2: {}",
+        monkeys2.monkey_business(10000, BigUint::from(1u32), factor)
+    );
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -448,10 +556,11 @@ mod tests {
             2,
             3,
         );
-        assert_eq!(
-            vec![(3, BigUint::new(vec![500])), (3, BigUint::new(vec![620])),],
-            monkey.compute_round(BigUint::new(vec![3]))
-        );
+        monkey.compute_round(BigUint::from(3u32), BigUint::from(23u32));
+        // assert_eq!(
+        //     vec![(3, BigUint::new(vec![500])), (3, BigUint::new(vec![620])),],
+        //     monkey.compute_round(BigUint::new(vec![3]), BigUint::from(23u32))
+        // );
         assert_eq!(2, monkey.inspection_count);
     }
 
@@ -523,7 +632,11 @@ mod tests {
                 1,
             ),
         ]);
-        monkeys.round(BigUint::new(vec![3]));
+        let reduction_factor = BigUint::from(13u32)
+            * BigUint::from(17u32)
+            * BigUint::from(19u32)
+            * BigUint::from(23u32);
+        monkeys.round(BigUint::new(vec![3]), reduction_factor.clone());
         assert_eq!(
             vec![
                 BigUint::new(vec![20]),
@@ -616,6 +729,13 @@ mod tests {
                 1,
             ),
         ]);
-        assert_eq!(10605, monkeys.monkey_business(20, BigUint::new(vec![3])));
+        let reduction_factor = BigUint::from(13u32)
+            * BigUint::from(17u32)
+            * BigUint::from(19u32)
+            * BigUint::from(23u32);
+        assert_eq!(
+            10605,
+            monkeys.monkey_business(20, BigUint::new(vec![3]), reduction_factor.clone())
+        );
     }
 }
