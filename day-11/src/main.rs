@@ -16,9 +16,25 @@ use std::fs::read_to_string;
 
 #[derive(Debug)]
 struct Monkey {
+    worry_level: u32,
     starting_items: Vec<u32>,
     operation: fn(u32) -> u32,
     test: fn(u32, usize, usize) -> (usize, u32),
+}
+
+impl Monkey {
+    fn new(
+        starting_items: Vec<u32>,
+        operation: fn(u32) -> u32,
+        test: fn(u32, usize, usize) -> (usize, u32),
+    ) -> Monkey {
+        Monkey {
+            worry_level: 0,
+            starting_items,
+            operation,
+            test,
+        }
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -32,4 +48,13 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_monkey_new() {
+        let monkey = Monkey::new(vec![1, 2, 3], |x| x + 1, |x, y, z| (y, x));
+        assert_eq!(0, monkey.worry_level);
+        assert_eq!(vec![1, 2, 3], monkey.starting_items);
+        assert_eq!(2, (monkey.operation)(1));
+        assert_eq!((1, 2), (monkey.test)(2, 1, 3));
+    }
 }
