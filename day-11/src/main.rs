@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::fs::read_to_string;
-
 #[derive(Debug)]
 struct Monkey {
     starting_items: Vec<u32>,
@@ -46,7 +44,6 @@ impl Monkey {
         let mut results = Vec::new();
         self.inspection_count += self.starting_items.len();
         self.starting_items.reverse();
-        println!("{:?}", self.starting_items);
         while let Some(item) = self.starting_items.pop() {
             let worry_level = (self.operation)(item) / 3;
             let (new_index, new_item) = (self.test)(worry_level, self.true_index, self.false_index);
@@ -87,15 +84,167 @@ impl Monkeys {
         }
         inspection_counts.sort();
         inspection_counts.reverse();
-        println!("{:?}", inspection_counts);
         inspection_counts[0] * inspection_counts[1]
     }
 }
 
 #[cfg(not(tarpaulin_include))]
 fn main() {
-    let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
+    let mut monkeys: Monkeys = Monkeys(vec![
+        //         Monkey 0:
+        //   Starting items: 66, 71, 94
+        //   Operation: new = old * 5
+        //   Test: divisible by 3
+        //     If true: throw to monkey 7
+        //     If false: throw to monkey 4
+        Monkey::new(
+            vec![66, 71, 94],
+            |old| old * 5,
+            |item, true_index, false_index| {
+                if 0 == item % 3 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            7,
+            4,
+        ),
+        //         Monkey 1:
+        //   Starting items: 70
+        //   Operation: new = old + 6
+        //   Test: divisible by 17
+        //     If true: throw to monkey 3
+        //     If false: throw to monkey 0
+        Monkey::new(
+            vec![70],
+            |old| old + 6,
+            |item, true_index, false_index| {
+                if 0 == item % 17 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            3,
+            0,
+        ),
+        //         Monkey 2:
+        //   Starting items: 62, 68, 56, 65, 94, 78
+        //   Operation: new = old + 5
+        //   Test: divisible by 2
+        //     If true: throw to monkey 3
+        //     If false: throw to monkey 1
+        Monkey::new(
+            vec![62, 68, 56, 65, 94, 78],
+            |old| old + 5,
+            |item, true_index, false_index| {
+                if 0 == item % 2 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            3,
+            1,
+        ),
+        // Monkey 3:
+        //   Starting items: 89, 94, 94, 67
+        //   Operation: new = old + 2
+        //   Test: divisible by 19
+        //     If true: throw to monkey 7
+        //     If false: throw to monkey 0
+        Monkey::new(
+            vec![89, 94, 94, 67],
+            |old| old + 2,
+            |item, true_index, false_index| {
+                if 0 == item % 19 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            7,
+            0,
+        ),
+        //         Monkey 4:
+        //   Starting items: 71, 61, 73, 65, 98, 98, 63
+        //   Operation: new = old * 7
+        //   Test: divisible by 11
+        //     If true: throw to monkey 5
+        //     If false: throw to monkey 6
+        Monkey::new(
+            vec![71, 61, 73, 65, 98, 98, 63],
+            |old| old * 7,
+            |item, true_index, false_index| {
+                if 0 == item % 11 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            5,
+            6,
+        ),
+        // Monkey 5:
+        //   Starting items: 55, 62, 68, 61, 60
+        //   Operation: new = old + 7
+        //   Test: divisible by 5
+        //     If true: throw to monkey 2
+        //     If false: throw to monkey 1
+        Monkey::new(
+            vec![55, 62, 68, 61, 60],
+            |old| old + 7,
+            |item, true_index, false_index| {
+                if 0 == item % 5 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            2,
+            1,
+        ),
+        // Monkey 6:
+        //   Starting items: 93, 91, 69, 64, 72, 89, 50, 71
+        //   Operation: new = old + 1
+        //   Test: divisible by 13
+        //     If true: throw to monkey 5
+        //     If false: throw to monkey 2
+        Monkey::new(
+            vec![93, 91, 69, 64, 72, 89, 50, 71],
+            |old| old + 1,
+            |item, true_index, false_index| {
+                if 0 == item % 13 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            5,
+            2,
+        ),
+        // Monkey 7:
+        //   Starting items: 76, 50
+        //   Operation: new = old * old
+        //   Test: divisible by 7
+        //     If true: throw to monkey 4
+        //     If false: throw to monkey 6
+        Monkey::new(
+            vec![76, 50],
+            |old| old * old,
+            |item, true_index, false_index| {
+                if 0 == item % 7 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            4,
+            6,
+        ),
+    ]);
+    println!("Part 1: {}", monkeys.monkey_business());
     // println!("Part 2: {}", input);
 }
 
