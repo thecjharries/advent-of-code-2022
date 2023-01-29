@@ -54,6 +54,16 @@ impl Monkey {
     }
 }
 
+struct Monkeys(Vec<Monkey>);
+
+impl Monkeys {
+    fn round(&mut self) {
+        for monkey in self.0.iter_mut() {
+            monkey.compute_round();
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -91,5 +101,24 @@ mod tests {
         );
         assert_eq!(vec![(3, 500), (3, 620),], monkey.compute_round());
         assert_eq!(2, monkey.inspection_count);
+    }
+
+    #[test]
+    fn test_monkeys_round() {
+        let mut monkeys = Monkeys(vec![Monkey::new(
+            vec![79, 98],
+            |old| old * 19,
+            |item, true_index, false_index| {
+                if 0 == item % 23 {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            2,
+            3,
+        )]);
+        monkeys.round();
+        assert_eq!(2, monkeys.0[0].inspection_count);
     }
 }
