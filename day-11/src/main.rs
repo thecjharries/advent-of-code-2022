@@ -21,6 +21,7 @@ struct Monkey {
     test: fn(u32, usize, usize) -> (usize, u32),
     true_index: usize,
     false_index: usize,
+    inspection_count: usize,
 }
 
 impl Monkey {
@@ -37,11 +38,13 @@ impl Monkey {
             test,
             true_index,
             false_index,
+            inspection_count: 0,
         }
     }
 
     fn compute_round(&mut self) -> Vec<(usize, u32)> {
         let mut results = Vec::new();
+        self.inspection_count += self.starting_items.len();
         for item in self.starting_items.iter() {
             let (new_index, new_item) =
                 (self.test)((self.operation)(*item), self.true_index, self.false_index);
@@ -87,5 +90,6 @@ mod tests {
             3,
         );
         assert_eq!(vec![(3, 500), (3, 620),], monkey.compute_round());
+        assert_eq!(2, monkey.inspection_count);
     }
 }
