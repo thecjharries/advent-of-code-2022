@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use num_bigint::BigUint;
-use std::ops::{Add, Div, Mul};
+use std::ops::{Add, Div, Mul, Rem};
 
 #[derive(Debug)]
 struct Monkey {
@@ -433,147 +433,189 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn test_monkey_compute_round() {
-    //     let mut monkey = Monkey::new(
-    //         vec![79, 98],
-    //         |old| old * 19,
-    //         |item, true_index, false_index| {
-    //             if 0 == item % 23 {
-    //                 (true_index, item)
-    //             } else {
-    //                 (false_index, item)
-    //             }
-    //         },
-    //         2,
-    //         3,
-    //     );
-    //     assert_eq!(vec![(3, 500), (3, 620),], monkey.compute_round(3));
-    //     assert_eq!(2, monkey.inspection_count);
-    // }
+    #[test]
+    fn test_monkey_compute_round() {
+        let mut monkey = Monkey::new(
+            vec![BigUint::new(vec![79]), BigUint::new(vec![98])],
+            |old| old.mul(&BigUint::new(vec![19])),
+            |item, true_index, false_index| {
+                if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![23])) {
+                    (true_index, item)
+                } else {
+                    (false_index, item)
+                }
+            },
+            2,
+            3,
+        );
+        assert_eq!(
+            vec![(3, BigUint::new(vec![500])), (3, BigUint::new(vec![620])),],
+            monkey.compute_round(BigUint::new(vec![3]))
+        );
+        assert_eq!(2, monkey.inspection_count);
+    }
 
-    // #[test]
-    // fn test_monkeys_round() {
-    //     let mut monkeys = Monkeys(vec![
-    //         Monkey::new(
-    //             vec![79, 98],
-    //             |old| old * 19,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 23 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             2,
-    //             3,
-    //         ),
-    //         Monkey::new(
-    //             vec![54, 65, 75, 74],
-    //             |old| old + 6,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 19 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             2,
-    //             0,
-    //         ),
-    //         Monkey::new(
-    //             vec![79, 60, 97],
-    //             |old| old * old,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 13 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             1,
-    //             3,
-    //         ),
-    //         Monkey::new(
-    //             vec![74],
-    //             |old| old + 3,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 17 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             0,
-    //             1,
-    //         ),
-    //     ]);
-    //     monkeys.round(3);
-    //     assert_eq!(vec![20, 23, 27, 26], monkeys.0[0].starting_items);
-    //     assert_eq!(
-    //         vec![2080, 25, 167, 207, 401, 1046],
-    //         monkeys.0[1].starting_items
-    //     );
-    //     assert_eq!(vec![] as Vec<BigUint>, monkeys.0[2].starting_items);
-    //     assert_eq!(vec![] as Vec<BigUint>, monkeys.0[3].starting_items);
-    // }
+    #[test]
+    fn test_monkeys_round() {
+        let mut monkeys = Monkeys(vec![
+            Monkey::new(
+                vec![BigUint::new(vec![79]), BigUint::new(vec![98])],
+                |old| old.mul(&BigUint::new(vec![19])),
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![23])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                2,
+                3,
+            ),
+            Monkey::new(
+                vec![
+                    BigUint::new(vec![54]),
+                    BigUint::new(vec![65]),
+                    BigUint::new(vec![75]),
+                    BigUint::new(vec![74]),
+                ],
+                |old| old.add(&BigUint::new(vec![6])),
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![19])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                2,
+                0,
+            ),
+            Monkey::new(
+                vec![
+                    BigUint::new(vec![79]),
+                    BigUint::new(vec![60]),
+                    BigUint::new(vec![97]),
+                ],
+                |old| {
+                    let factor = old.clone();
+                    old.mul(factor)
+                },
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![13])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                1,
+                3,
+            ),
+            Monkey::new(
+                vec![BigUint::new(vec![74])],
+                |old| old.add(&BigUint::new(vec![3])),
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![17])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                0,
+                1,
+            ),
+        ]);
+        monkeys.round(BigUint::new(vec![3]));
+        assert_eq!(
+            vec![
+                BigUint::new(vec![20]),
+                BigUint::new(vec![23]),
+                BigUint::new(vec![27]),
+                BigUint::new(vec![26])
+            ],
+            monkeys.0[0].starting_items
+        );
+        assert_eq!(
+            vec![
+                BigUint::new(vec![2080]),
+                BigUint::new(vec![25]),
+                BigUint::new(vec![167]),
+                BigUint::new(vec![207]),
+                BigUint::new(vec![401]),
+                BigUint::new(vec![1046])
+            ],
+            monkeys.0[1].starting_items
+        );
+        assert_eq!(vec![] as Vec<BigUint>, monkeys.0[2].starting_items);
+        assert_eq!(vec![] as Vec<BigUint>, monkeys.0[3].starting_items);
+    }
 
-    // #[test]
-    // fn test_monkeys_monkey_business() {
-    //     let mut monkeys = Monkeys(vec![
-    //         Monkey::new(
-    //             vec![79, 98],
-    //             |old| old * 19,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 23 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             2,
-    //             3,
-    //         ),
-    //         Monkey::new(
-    //             vec![54, 65, 75, 74],
-    //             |old| old + 6,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 19 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             2,
-    //             0,
-    //         ),
-    //         Monkey::new(
-    //             vec![79, 60, 97],
-    //             |old| old * old,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 13 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             1,
-    //             3,
-    //         ),
-    //         Monkey::new(
-    //             vec![74],
-    //             |old| old + 3,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 17 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             0,
-    //             1,
-    //         ),
-    //     ]);
-    //     assert_eq!(10605, monkeys.monkey_business(20, 3));
-    // }
+    #[test]
+    fn test_monkeys_monkey_business() {
+        let mut monkeys = Monkeys(vec![
+            Monkey::new(
+                vec![BigUint::new(vec![79]), BigUint::new(vec![98])],
+                |old| old.mul(&BigUint::new(vec![19])),
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![23])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                2,
+                3,
+            ),
+            Monkey::new(
+                vec![
+                    BigUint::new(vec![54]),
+                    BigUint::new(vec![65]),
+                    BigUint::new(vec![75]),
+                    BigUint::new(vec![74]),
+                ],
+                |old| old.add(&BigUint::new(vec![6])),
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![19])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                2,
+                0,
+            ),
+            Monkey::new(
+                vec![
+                    BigUint::new(vec![79]),
+                    BigUint::new(vec![60]),
+                    BigUint::new(vec![97]),
+                ],
+                |old| {
+                    let factor = old.clone();
+                    old.mul(factor)
+                },
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![13])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                1,
+                3,
+            ),
+            Monkey::new(
+                vec![BigUint::new(vec![74])],
+                |old| old.add(&BigUint::new(vec![3])),
+                |item, true_index, false_index| {
+                    if BigUint::new(vec![0]) == item.clone().rem(&BigUint::new(vec![17])) {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                0,
+                1,
+            ),
+        ]);
+        assert_eq!(10605, monkeys.monkey_business(20, BigUint::new(vec![3])));
+    }
 }
