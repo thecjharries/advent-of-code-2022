@@ -77,19 +77,19 @@ impl Monkeys {
         }
     }
 
-    // fn monkey_business(&mut self) -> usize {
-    //     for _ in 0..20 {
-    //         self.round();
-    //     }
-    //     let mut inspection_counts = Vec::new();
-    //     for monkey in self.0.iter() {
-    //         inspection_counts.push(monkey.inspection_count);
-    //     }
-    //     inspection_counts.sort();
-    //     inspection_counts.reverse();
-    //     println!("{:?}", inspection_counts);
-    //     inspection_counts[0] * inspection_counts[1]
-    // }
+    fn monkey_business(&mut self) -> usize {
+        for _ in 0..20 {
+            self.round();
+        }
+        let mut inspection_counts = Vec::new();
+        for monkey in self.0.iter() {
+            inspection_counts.push(monkey.inspection_count);
+        }
+        inspection_counts.sort();
+        inspection_counts.reverse();
+        println!("{:?}", inspection_counts);
+        inspection_counts[0] * inspection_counts[1]
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -197,62 +197,62 @@ mod tests {
         assert_eq!(vec![] as Vec<u32>, monkeys.0[3].starting_items);
     }
 
-    // #[test]
-    // fn test_monkeys_monkey_business() {
-    //     let mut monkeys = Monkeys(vec![
-    //         Monkey::new(
-    //             vec![79, 98],
-    //             |old| old * 19,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 23 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             2,
-    //             3,
-    //         ),
-    //         Monkey::new(
-    //             vec![54, 65, 75, 74],
-    //             |old| old + 6,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 19 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             2,
-    //             0,
-    //         ),
-    //         Monkey::new(
-    //             vec![79, 60, 97],
-    //             |old| old * old,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 13 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             1,
-    //             3,
-    //         ),
-    //         Monkey::new(
-    //             vec![74],
-    //             |old| old + 3,
-    //             |item, true_index, false_index| {
-    //                 if 0 == item % 17 {
-    //                     (true_index, item)
-    //                 } else {
-    //                     (false_index, item)
-    //                 }
-    //             },
-    //             0,
-    //             1,
-    //         ),
-    //     ]);
-    //     assert_eq!(10605, monkeys.monkey_business());
-    // }
+    #[test]
+    fn test_monkeys_monkey_business() {
+        let mut monkeys = Monkeys(vec![
+            Monkey::new(
+                vec![79, 98],
+                |old| old * 19,
+                |item, true_index, false_index| {
+                    if 0 == item % 23 {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                2,
+                3,
+            ),
+            Monkey::new(
+                vec![54, 65, 75, 74],
+                |old| old + 6,
+                |item, true_index, false_index| {
+                    if 0 == item % 19 {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                2,
+                0,
+            ),
+            Monkey::new(
+                vec![79, 60, 97],
+                |old| old * old,
+                |item, true_index, false_index| {
+                    if 0 == item % 13 {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                1,
+                3,
+            ),
+            Monkey::new(
+                vec![74],
+                |old| old + 3,
+                |item, true_index, false_index| {
+                    if 0 == item % 17 {
+                        (true_index, item)
+                    } else {
+                        (false_index, item)
+                    }
+                },
+                0,
+                1,
+            ),
+        ]);
+        assert_eq!(10605, monkeys.monkey_business());
+    }
 }
