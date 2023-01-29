@@ -41,7 +41,13 @@ impl Monkey {
     }
 
     fn compute_round(&mut self) -> Vec<(usize, u32)> {
-        todo!()
+        let mut results = Vec::new();
+        for item in self.starting_items.iter() {
+            let (new_index, new_item) =
+                (self.test)((self.operation)(*item), self.true_index, self.false_index);
+            results.push((new_index, new_item / 3));
+        }
+        results
     }
 }
 
