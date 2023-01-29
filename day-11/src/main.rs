@@ -40,12 +40,12 @@ impl Monkey {
         }
     }
 
-    fn compute_round(&mut self) -> Vec<(usize, u32)> {
+    fn compute_round(&mut self, factor: u32) -> Vec<(usize, u32)> {
         let mut results = Vec::new();
         self.inspection_count += self.starting_items.len();
         self.starting_items.reverse();
         while let Some(item) = self.starting_items.pop() {
-            let worry_level = (self.operation)(item) / 3;
+            let worry_level = (self.operation)(item) / factor;
             let (new_index, new_item) = (self.test)(worry_level, self.true_index, self.false_index);
             results.push((new_index, new_item));
         }
@@ -56,7 +56,7 @@ impl Monkey {
 struct Monkeys(Vec<Monkey>);
 
 impl Monkeys {
-    fn round(&mut self) {
+    fn round(&mut self, factor: u32) {
         let mut results: Vec<(usize, u32)> = Vec::new();
         for (index, monkey) in self.0.iter_mut().enumerate() {
             for item in results.iter() {
@@ -64,7 +64,7 @@ impl Monkeys {
                     monkey.starting_items.push(item.1);
                 }
             }
-            for item in monkey.compute_round() {
+            for item in monkey.compute_round(factor) {
                 results.push(item);
             }
             results.retain(|item| index != item.0);
@@ -74,9 +74,9 @@ impl Monkeys {
         }
     }
 
-    fn monkey_business(&mut self) -> usize {
-        for _ in 0..20 {
-            self.round();
+    fn monkey_business(&mut self, rounds: u32, factor: u32) -> usize {
+        for _ in 0..rounds {
+            self.round(factor);
         }
         let mut inspection_counts = Vec::new();
         for monkey in self.0.iter() {
@@ -244,7 +244,7 @@ fn main() {
             6,
         ),
     ]);
-    println!("Part 1: {}", monkeys.monkey_business());
+    println!("Part 1: {}", monkeys.monkey_business(20, 3));
     // println!("Part 2: {}", input);
 }
 
@@ -276,7 +276,7 @@ mod tests {
             2,
             3,
         );
-        assert_eq!(vec![(3, 500), (3, 620),], monkey.compute_round());
+        assert_eq!(vec![(3, 500), (3, 620),], monkey.compute_round(3));
         assert_eq!(2, monkey.inspection_count);
     }
 
@@ -336,7 +336,7 @@ mod tests {
                 1,
             ),
         ]);
-        monkeys.round();
+        monkeys.round(3);
         assert_eq!(vec![20, 23, 27, 26], monkeys.0[0].starting_items);
         assert_eq!(
             vec![2080, 25, 167, 207, 401, 1046],
@@ -402,6 +402,6 @@ mod tests {
                 1,
             ),
         ]);
-        assert_eq!(10605, monkeys.monkey_business());
+        assert_eq!(10605, monkeys.monkey_business(20, 3));
     }
 }
