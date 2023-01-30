@@ -26,11 +26,6 @@ impl Point {
     fn new(x: usize, y: usize) -> Point {
         Point { x, y }
     }
-
-    fn manhattan_distance(first: &Point, second: &Point) -> usize {
-        (first.x as isize - second.x as isize).abs() as usize
-            + (first.y as isize - second.y as isize).abs() as usize
-    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -199,13 +194,6 @@ mod tests {
         let point = Point::new(1, 2);
         assert_eq!(1, point.x);
         assert_eq!(2, point.y);
-    }
-
-    #[test]
-    fn test_point_manhattan_distance() {
-        let first = Point::new(1, 2);
-        let second = Point::new(3, 4);
-        assert_eq!(4, Point::manhattan_distance(&first, &second));
     }
 
     #[test]
