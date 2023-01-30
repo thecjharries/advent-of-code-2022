@@ -184,7 +184,8 @@ impl HeightMap {
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
+    let mut height_map1 = HeightMap::from_str(&input).expect("Unable to parse input");
+    println!("Part 1: {}", height_map1.a_star());
     // println!("Part 2: {}", input);
 }
 
