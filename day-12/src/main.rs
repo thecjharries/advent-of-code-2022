@@ -182,7 +182,7 @@ impl HeightMap {
                 }
             }
         }
-        0
+        usize::MAX
     }
 }
 
