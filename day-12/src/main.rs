@@ -91,13 +91,13 @@ impl HeightMap {
         Some(result)
     }
 
-    fn a_star(&mut self) -> usize {
+    fn a_star(&mut self, start: Point) -> usize {
         let mut open_set: Vec<Point> = Vec::new();
-        open_set.push(self.start);
+        open_set.push(start);
         let mut came_from: HashMap<Point, Point> = HashMap::new();
         let mut g_score: HashMap<Point, i64> = HashMap::new();
         let mut f_score: HashMap<Point, i64> = HashMap::new();
-        f_score.insert(self.start, i16::MAX as i64);
+        f_score.insert(start, i16::MAX as i64);
         while 0 < open_set.len() {
             open_set.sort_by(|first, second| {
                 f_score
@@ -190,7 +190,7 @@ impl HeightMap {
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     let mut height_map1 = HeightMap::from_str(&input).expect("Unable to parse input");
-    println!("Part 1: {}", height_map1.a_star());
+    println!("Part 1: {}", height_map1.a_star(height_map1.start));
     // println!("Part 2: {}", input);
 }
 
@@ -266,6 +266,6 @@ mod tests {
         ",
         )
         .unwrap();
-        assert_eq!(31, height_map.a_star());
+        assert_eq!(31, height_map.a_star(height_map.start));
     }
 }
