@@ -109,7 +109,7 @@ impl HeightMap {
             if 'E' == self.map[current.y][current.x] {
                 let mut distance = 0;
                 let mut current = current;
-                while self.start != current {
+                while start != current {
                     distance += 1;
                     current = came_from.get(&current).unwrap().clone();
                 }
@@ -183,6 +183,19 @@ impl HeightMap {
             }
         }
         usize::MAX
+    }
+
+    fn find_shortest_path(&mut self) -> usize {
+        let mut shortest_path = usize::MAX;
+        let starts = self.possible_starts.clone();
+        println!("{:?}", starts);
+        for start in starts.iter() {
+            let path = self.a_star(*start);
+            if path < shortest_path {
+                shortest_path = path;
+            }
+        }
+        shortest_path
     }
 }
 
@@ -267,5 +280,21 @@ mod tests {
         )
         .unwrap();
         assert_eq!(31, height_map.a_star(height_map.start));
+    }
+
+    #[test]
+    fn test_height_map_find_shortest_path() {
+        let mut height_map = HeightMap::from_str(
+            "
+    Sabqponm
+    abcryxxl
+    accszExk
+    acctuvwj
+    abdefghi
+
+        ",
+        )
+        .unwrap();
+        assert_eq!(29, height_map.find_shortest_path());
     }
 }
