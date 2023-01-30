@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(unused_imports)]
 use num_bigint::BigUint;
 use std::ops::{Add, Div, Mul, Rem};
 
@@ -523,7 +524,7 @@ mod tests {
         let monkey = Monkey::new(
             vec![BigUint::new(vec![1]), BigUint::new(vec![2])],
             |x| x.add(&BigUint::new(vec![1])),
-            |x, y, z| (y, x),
+            |x, y, _| (y, x),
             0,
             1,
         );
