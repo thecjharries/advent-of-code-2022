@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use std::fs::read_to_string;
+use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
 struct Point {
@@ -28,6 +29,38 @@ impl Point {
     fn manhattan_distance(first: &Point, second: &Point) -> usize {
         (first.x as isize - second.x as isize).abs() as usize
             + (first.y as isize - second.y as isize).abs() as usize
+    }
+}
+
+#[derive(Debug, PartialEq)]
+struct HeightMap {
+    map: Vec<Vec<char>>,
+    start: Point,
+    end: Point,
+}
+
+impl FromStr for HeightMap {
+    type Err = String;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let mut map = Vec::new();
+        let mut start = Point::new(0, 0);
+        let mut end = Point::new(0, 0);
+
+        for line in input.trim().lines() {
+            let line = line.trim();
+            let mut row = Vec::new();
+            for character in line.chars() {
+                if 'S' == character {
+                    start = Point::new(row.len(), map.len());
+                } else if 'E' == character {
+                    end = Point::new(row.len(), map.len());
+                }
+                row.push(character);
+            }
+            map.push(row);
+        }
+        Ok(HeightMap { map, start, end })
     }
 }
 
@@ -55,5 +88,34 @@ mod tests {
         let first = Point::new(1, 2);
         let second = Point::new(3, 4);
         assert_eq!(4, Point::manhattan_distance(&first, &second));
+    }
+
+    #[test]
+    fn test_height_map_from_str() {
+        let expected = HeightMap {
+            map: vec![
+                vec!['S', 'a', 'b', 'q', 'p', 'o', 'n', 'm'],
+                vec!['a', 'b', 'c', 'r', 'y', 'x', 'x', 'l'],
+                vec!['a', 'c', 'c', 's', 'z', 'E', 'x', 'k'],
+                vec!['a', 'c', 'c', 't', 'u', 'v', 'w', 'j'],
+                vec!['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i'],
+            ],
+            start: Point::new(0, 0),
+            end: Point::new(5, 2),
+        };
+        assert_eq!(
+            expected,
+            HeightMap::from_str(
+                "
+        Sabqponm
+        abcryxxl
+        accszExk
+        acctuvwj
+        abdefghi
+
+            "
+            )
+            .unwrap()
+        );
     }
 }
