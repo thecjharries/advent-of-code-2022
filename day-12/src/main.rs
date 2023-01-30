@@ -177,7 +177,6 @@ impl HeightMap {
                 }
             }
         }
-        println!("{:?}", came_from);
         0
     }
 }
@@ -237,15 +236,15 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn test_height_map_distance() {
-    //     assert_eq!(i16::MAX, HeightMap::distance('a', 'S'));
-    //     assert_eq!(i16::MIN, HeightMap::distance('a', 'E'));
-    //     assert_eq!(-1, HeightMap::distance('a', 'b'));
-    //     assert_eq!(0, HeightMap::distance('a', 'a'));
-    //     assert_eq!(i16::MAX, HeightMap::distance('a', 'c'));
-    //     assert_eq!(10, HeightMap::distance('k', 'a'));
-    // }
+    #[test]
+    fn test_height_map_distance() {
+        assert_eq!(0, HeightMap::distance('a', 'S').unwrap());
+        assert!(HeightMap::distance('a', 'E').is_none());
+        assert_eq!(-1, HeightMap::distance('a', 'b').unwrap());
+        assert_eq!(0, HeightMap::distance('a', 'a').unwrap());
+        assert!(HeightMap::distance('a', 'c').is_none());
+        assert_eq!(10, HeightMap::distance('k', 'a').unwrap());
+    }
 
     #[test]
     fn test_height_map_a_star() {
