@@ -14,6 +14,11 @@
 
 use std::fs::read_to_string;
 
+struct Point {
+    x: usize,
+    y: usize,
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
