@@ -64,6 +64,21 @@ impl FromStr for HeightMap {
     }
 }
 
+impl HeightMap {
+    fn distance(first: char, second: char) -> i16 {
+        if 'S' == second {
+            return i16::MAX;
+        } else if 'E' == second {
+            return i16::MIN;
+        }
+        let result = (first as i16 - 'a' as i16 + 1) - (second as i16 - 'a' as i16 + 1);
+        if result < -1 {
+            return i16::MAX;
+        }
+        result
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -117,5 +132,15 @@ mod tests {
             )
             .unwrap()
         );
+    }
+
+    #[test]
+    fn test_height_map_distance() {
+        assert_eq!(i16::MAX, HeightMap::distance('a', 'S'));
+        assert_eq!(i16::MIN, HeightMap::distance('a', 'E'));
+        assert_eq!(-1, HeightMap::distance('a', 'b'));
+        assert_eq!(0, HeightMap::distance('a', 'a'));
+        assert_eq!(i16::MAX, HeightMap::distance('a', 'c'));
+        assert_eq!(10, HeightMap::distance('k', 'a'));
     }
 }
