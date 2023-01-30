@@ -188,7 +188,6 @@ impl HeightMap {
     fn find_shortest_path(&mut self) -> usize {
         let mut shortest_path = usize::MAX;
         let starts = self.possible_starts.clone();
-        println!("{:?}", starts);
         for start in starts.iter() {
             let path = self.a_star(*start);
             if path < shortest_path {
@@ -202,9 +201,9 @@ impl HeightMap {
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    let mut height_map1 = HeightMap::from_str(&input).expect("Unable to parse input");
-    println!("Part 1: {}", height_map1.a_star(height_map1.start));
-    // println!("Part 2: {}", input);
+    let mut height_map = HeightMap::from_str(&input).expect("Unable to parse input");
+    println!("Part 1: {}", height_map.a_star(height_map.start));
+    println!("Part 2: {}", height_map.find_shortest_path());
 }
 
 #[cfg(not(tarpaulin_include))]
