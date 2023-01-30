@@ -33,6 +33,7 @@ struct HeightMap {
     map: Vec<Vec<char>>,
     start: Point,
     end: Point,
+    possible_starts: Vec<Point>,
 }
 
 impl FromStr for HeightMap {
@@ -42,6 +43,7 @@ impl FromStr for HeightMap {
         let mut map = Vec::new();
         let mut start = Point::new(0, 0);
         let mut end = Point::new(0, 0);
+        let mut possible_starts = Vec::new();
 
         for line in input.trim().lines() {
             let line = line.trim();
@@ -49,14 +51,22 @@ impl FromStr for HeightMap {
             for character in line.chars() {
                 if 'S' == character {
                     start = Point::new(row.len(), map.len());
+                    possible_starts.push(start);
                 } else if 'E' == character {
                     end = Point::new(row.len(), map.len());
+                } else if 'a' == character {
+                    possible_starts.push(Point::new(row.len(), map.len()));
                 }
                 row.push(character);
             }
             map.push(row);
         }
-        Ok(HeightMap { map, start, end })
+        Ok(HeightMap {
+            map,
+            start,
+            end,
+            possible_starts,
+        })
     }
 }
 
@@ -208,6 +218,14 @@ mod tests {
             ],
             start: Point::new(0, 0),
             end: Point::new(5, 2),
+            possible_starts: vec![
+                Point::new(0, 0),
+                Point::new(1, 0),
+                Point::new(0, 1),
+                Point::new(0, 2),
+                Point::new(0, 3),
+                Point::new(0, 4),
+            ],
         };
         assert_eq!(
             expected,
