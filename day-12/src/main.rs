@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::collections::HashMap;
 use std::fs::read_to_string;
 use std::str::FromStr;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 struct Point {
     x: usize,
     y: usize,
@@ -65,17 +66,119 @@ impl FromStr for HeightMap {
 }
 
 impl HeightMap {
-    fn distance(first: char, second: char) -> i16 {
+    fn distance(first: char, second: char) -> Option<i16> {
+        let mut first = first;
+        let mut second = second;
+        if 'S' == first {
+            first = 'a';
+        } else if 'E' == first {
+            first = 'z';
+        }
         if 'S' == second {
-            return i16::MAX;
+            second = 'a';
         } else if 'E' == second {
-            return i16::MIN;
+            second = 'z';
         }
         let result = (first as i16 - 'a' as i16 + 1) - (second as i16 - 'a' as i16 + 1);
         if result < -1 {
-            return i16::MAX;
+            return None;
         }
-        result
+        Some(result)
+    }
+
+    fn a_star(&mut self) -> usize {
+        let mut open_set: Vec<Point> = Vec::new();
+        open_set.push(self.start);
+        let mut came_from: HashMap<Point, Point> = HashMap::new();
+        let mut g_score: HashMap<Point, i64> = HashMap::new();
+        let mut f_score: HashMap<Point, i64> = HashMap::new();
+        f_score.insert(self.start, i16::MAX as i64);
+        while 0 < open_set.len() {
+            open_set.sort_by(|first, second| {
+                f_score
+                    .get(first)
+                    .unwrap()
+                    .cmp(f_score.get(second).unwrap())
+            });
+            let current = open_set.remove(0);
+            if 'E' == self.map[current.y][current.x] {
+                let mut distance = 0;
+                let mut current = current;
+                while self.start != current {
+                    distance += 1;
+                    current = came_from.get(&current).unwrap().clone();
+                }
+                return distance;
+            }
+            let mut neighbors: Vec<Point> = Vec::new();
+            if 0 < current.y {
+                let neighbor = Point::new(current.x, current.y - 1);
+                if HeightMap::distance(
+                    self.map[current.y][current.x],
+                    self.map[neighbor.y][neighbor.x],
+                )
+                .is_some()
+                {
+                    neighbors.push(neighbor);
+                }
+            }
+            if current.y < self.map.len() - 1 {
+                let neighbor = Point::new(current.x, current.y + 1);
+                if HeightMap::distance(
+                    self.map[current.y][current.x],
+                    self.map[neighbor.y][neighbor.x],
+                )
+                .is_some()
+                {
+                    neighbors.push(neighbor);
+                }
+            }
+            if 0 < current.x {
+                let neighbor = Point::new(current.x - 1, current.y);
+                if HeightMap::distance(
+                    self.map[current.y][current.x],
+                    self.map[neighbor.y][neighbor.x],
+                )
+                .is_some()
+                {
+                    neighbors.push(neighbor);
+                }
+            }
+            if current.x < self.map[current.y].len() - 1 {
+                let neighbor = Point::new(current.x + 1, current.y);
+                if HeightMap::distance(
+                    self.map[current.y][current.x],
+                    self.map[neighbor.y][neighbor.x],
+                )
+                .is_some()
+                {
+                    neighbors.push(neighbor);
+                }
+            }
+            for neighbor in neighbors {
+                let tentative_g_score = g_score.get(&current).unwrap_or(&(i16::MAX as i64)) + 1;
+                if !g_score.contains_key(&neighbor)
+                    || tentative_g_score < *g_score.get(&neighbor).unwrap()
+                {
+                    came_from.insert(neighbor, current);
+                    g_score.insert(neighbor, tentative_g_score);
+                    f_score.insert(
+                        neighbor,
+                        tentative_g_score
+                            + HeightMap::distance(
+                                self.map[current.y][current.x],
+                                self.map[neighbor.y][neighbor.x],
+                            )
+                            .unwrap() as i64,
+                    );
+                    if !open_set.contains(&neighbor) {
+                        open_set.push(neighbor);
+                    }
+                }
+            }
+        }
+        println!("{:?}", came_from);
+        0
     }
 }
 
@@ -134,13 +237,29 @@ mod tests {
         );
     }
 
+    // #[test]
+    // fn test_height_map_distance() {
+    //     assert_eq!(i16::MAX, HeightMap::distance('a', 'S'));
+    //     assert_eq!(i16::MIN, HeightMap::distance('a', 'E'));
+    //     assert_eq!(-1, HeightMap::distance('a', 'b'));
+    //     assert_eq!(0, HeightMap::distance('a', 'a'));
+    //     assert_eq!(i16::MAX, HeightMap::distance('a', 'c'));
+    //     assert_eq!(10, HeightMap::distance('k', 'a'));
+    // }
+
     #[test]
-    fn test_height_map_distance() {
-        assert_eq!(i16::MAX, HeightMap::distance('a', 'S'));
-        assert_eq!(i16::MIN, HeightMap::distance('a', 'E'));
-        assert_eq!(-1, HeightMap::distance('a', 'b'));
-        assert_eq!(0, HeightMap::distance('a', 'a'));
-        assert_eq!(i16::MAX, HeightMap::distance('a', 'c'));
-        assert_eq!(10, HeightMap::distance('k', 'a'));
+    fn test_height_map_a_star() {
+        let mut height_map = HeightMap::from_str(
+            "
+    Sabqponm
+    abcryxxl
+    accszExk
+    acctuvwj
+    abdefghi
+
+        ",
+        )
+        .unwrap();
+        assert_eq!(31, height_map.a_star());
     }
 }
