@@ -23,6 +23,11 @@ impl Point {
     fn new(x: usize, y: usize) -> Point {
         Point { x, y }
     }
+
+    fn manhattan_distance(&self, other: &Point) -> usize {
+        (self.x as isize - other.x as isize).abs() as usize
+            + (self.y as isize - other.y as isize).abs() as usize
+    }
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -42,5 +47,12 @@ mod tests {
         let point = Point::new(1, 2);
         assert_eq!(1, point.x);
         assert_eq!(2, point.y);
+    }
+
+    #[test]
+    fn test_point_manhattan_distance() {
+        let point = Point::new(1, 2);
+        let other = Point::new(3, 4);
+        assert_eq!(4, point.manhattan_distance(&other));
     }
 }
