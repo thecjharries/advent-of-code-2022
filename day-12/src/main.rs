@@ -14,6 +14,7 @@
 
 use std::fs::read_to_string;
 
+#[derive(Debug, PartialEq)]
 struct Point {
     x: usize,
     y: usize,
@@ -24,9 +25,9 @@ impl Point {
         Point { x, y }
     }
 
-    fn manhattan_distance(&self, other: &Point) -> usize {
-        (self.x as isize - other.x as isize).abs() as usize
-            + (self.y as isize - other.y as isize).abs() as usize
+    fn manhattan_distance(first: &Point, second: &Point) -> usize {
+        (first.x as isize - second.x as isize).abs() as usize
+            + (first.y as isize - second.y as isize).abs() as usize
     }
 }
 
@@ -51,8 +52,8 @@ mod tests {
 
     #[test]
     fn test_point_manhattan_distance() {
-        let point = Point::new(1, 2);
-        let other = Point::new(3, 4);
-        assert_eq!(4, point.manhattan_distance(&other));
+        let first = Point::new(1, 2);
+        let second = Point::new(3, 4);
+        assert_eq!(4, Point::manhattan_distance(&first, &second));
     }
 }
