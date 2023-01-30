@@ -19,6 +19,12 @@ struct Point {
     y: usize,
 }
 
+impl Point {
+    fn new(x: usize, y: usize) -> Point {
+        Point { x, y }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -30,4 +36,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_point_new() {
+        let point = Point::new(1, 2);
+        assert_eq!(1, point.x);
+        assert_eq!(2, point.y);
+    }
 }
