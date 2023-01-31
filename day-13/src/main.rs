@@ -60,7 +60,7 @@ impl std::cmp::Ord for Node {
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
     println!("Part 1: {}", sum_correct_packet_indices(&input));
-    // println!("Part 2: {}", input);
+    println!("Part 2: {}", find_decoder_key(&input));
 }
 
 fn sum_correct_packet_indices(input: &str) -> usize {
