@@ -59,7 +59,7 @@ impl std::cmp::Ord for Node {
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
-    println!("Part 1: {}", input);
+    println!("Part 1: {}", sum_correct_packet_indices(&input));
     // println!("Part 2: {}", input);
 }
 
