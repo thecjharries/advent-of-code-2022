@@ -96,4 +96,29 @@ mod tests {
         let expected_output = vec![Node::Number(4)];
         assert_eq!(expected_output, input.with_slice(|n| n.to_vec()));
     }
+
+    #[test]
+    fn test_node_partial_ord() {
+        let first = Node::List(vec![
+            Node::List(vec![Node::Number(4), Node::Number(4)]),
+            Node::Number(4),
+            Node::Number(4),
+        ]);
+        let second = Node::List(vec![
+            Node::List(vec![Node::Number(4), Node::Number(4)]),
+            Node::Number(4),
+            Node::Number(4),
+        ]);
+        assert_eq!(Some(std::cmp::Ordering::Equal), first.partial_cmp(&second));
+        let first = Node::List(vec![
+            Node::List(vec![Node::Number(4), Node::Number(4)]),
+            Node::Number(4),
+            Node::Number(4),
+        ]);
+        let second = Node::Number(3);
+        assert_eq!(
+            Some(std::cmp::Ordering::Greater),
+            first.partial_cmp(&second)
+        );
+    }
 }
