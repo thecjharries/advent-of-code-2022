@@ -79,6 +79,10 @@ fn sum_correct_packet_indices(input: &str) -> usize {
     sum
 }
 
+fn find_decoder_key(input: &str) -> usize {
+    todo!()
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
