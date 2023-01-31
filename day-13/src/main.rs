@@ -12,7 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// https://fasterthanli.me/series/advent-of-code-2022/part-13
+
+use serde::Deserialize;
 use std::fs::read_to_string;
+
+#[derive(Deserialize, Clone, PartialEq, Eq)]
+#[serde(untagged)]
+enum Node {
+    Number(u64),
+    List(Vec<Node>),
+}
 
 #[cfg(not(tarpaulin_include))]
 fn main() {
