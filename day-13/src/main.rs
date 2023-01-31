@@ -17,7 +17,7 @@
 use serde::Deserialize;
 use std::fs::read_to_string;
 
-#[derive(Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
 #[serde(untagged)]
 enum Node {
     Number(u64),
@@ -35,4 +35,15 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_deserialize_node() {
+        let input = "[[4,4],4,4]";
+        let expected_output = Node::List(vec![
+            Node::List(vec![Node::Number(4), Node::Number(4)]),
+            Node::Number(4),
+            Node::Number(4),
+        ]);
+        assert_eq!(expected_output, serde_json::from_str(input).unwrap());
+    }
 }
