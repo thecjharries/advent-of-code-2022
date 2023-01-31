@@ -64,7 +64,19 @@ fn main() {
 }
 
 fn sum_correct_packet_indices(input: &str) -> usize {
-    0
+    let mut sum = 0;
+    for (index, group) in input.trim().split("\n\n").enumerate() {
+        let index = index + 1;
+        let mut nodes = group
+            .lines()
+            .map(|line| serde_json::from_str(line.trim()).unwrap());
+        let first: Node = nodes.next().unwrap();
+        let second: Node = nodes.next().unwrap();
+        if first < second {
+            sum += index;
+        }
+    }
+    sum
 }
 
 #[cfg(not(tarpaulin_include))]
