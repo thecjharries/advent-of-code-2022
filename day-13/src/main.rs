@@ -41,12 +41,18 @@ impl std::cmp::PartialOrd for Node {
                 o.with_slice(|o| {
                     n.iter()
                         .zip(o.iter())
-                        .map(|(nn, oo)| nn.partial_cmp(oo))
-                        .find(|&ord| ord != Ordering::Equal)
-                        .unwrap_or(|| n.len().cmp(&o.len()))
+                        .map(|(nn, oo)| nn.cmp(oo))
+                        .find(|&ord| ord != std::cmp::Ordering::Equal)
+                        .unwrap_or_else(|| n.len().cmp(&o.len()))
                 })
             })),
         }
+    }
+}
+
+impl std::cmp::Ord for Node {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.partial_cmp(other).unwrap()
     }
 }
 
