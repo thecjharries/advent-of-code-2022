@@ -63,6 +63,10 @@ fn main() {
     // println!("Part 2: {}", input);
 }
 
+fn sum_correct_packet_indices(input: &str) -> usize {
+    0
+}
+
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
