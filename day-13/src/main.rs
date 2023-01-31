@@ -33,6 +33,23 @@ impl Node {
     }
 }
 
+impl std::cmp::PartialOrd for Node {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match (self, other) {
+            (Self::Number(n), Self::Number(o)) => n.partial_cmp(o),
+            (n, o) => Some(n.with_slice(|n| {
+                o.with_slice(|o| {
+                    n.iter()
+                        .zip(o.iter())
+                        .map(|(nn, oo)| nn.partial_cmp(oo))
+                        .find(|&ord| ord != Ordering::Equal)
+                        .unwrap_or(|| n.len().cmp(&o.len()))
+                })
+            })),
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
