@@ -24,6 +24,15 @@ enum Node {
     List(Vec<Node>),
 }
 
+impl Node {
+    fn with_slice<T>(&self, f: impl FnOnce(&[Node]) -> T) -> T {
+        match self {
+            Self::List(n) => f(&n[..]),
+            Self::Number(n) => f(&[Self::Number(*n)]),
+        }
+    }
+}
+
 #[cfg(not(tarpaulin_include))]
 fn main() {
     let input = read_to_string("input.txt").expect("Unable to read input file");
@@ -45,5 +54,23 @@ mod tests {
             Node::Number(4),
         ]);
         assert_eq!(expected_output, serde_json::from_str(input).unwrap());
+    }
+
+    #[test]
+    fn test_node_with_slice() {
+        let input = Node::List(vec![
+            Node::List(vec![Node::Number(4), Node::Number(4)]),
+            Node::Number(4),
+            Node::Number(4),
+        ]);
+        let expected_output = vec![
+            Node::List(vec![Node::Number(4), Node::Number(4)]),
+            Node::Number(4),
+            Node::Number(4),
+        ];
+        assert_eq!(expected_output, input.with_slice(|n| n.to_vec()));
+        let input = Node::Number(4);
+        let expected_output = vec![Node::Number(4)];
+        assert_eq!(expected_output, input.with_slice(|n| n.to_vec()));
     }
 }
