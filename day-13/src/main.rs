@@ -80,7 +80,22 @@ fn sum_correct_packet_indices(input: &str) -> usize {
 }
 
 fn find_decoder_key(input: &str) -> usize {
-    todo!()
+    let dividers = vec![
+        Node::List(vec![Node::Number(2)]),
+        Node::List(vec![Node::Number(6)]),
+    ];
+    let mut nodes = input
+        .trim()
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| serde_json::from_str::<Node>(line.trim()).unwrap())
+        .chain(dividers.iter().cloned())
+        .collect::<Vec<_>>();
+    nodes.sort();
+    dividers
+        .iter()
+        .map(|d| nodes.binary_search(d).unwrap() + 1)
+        .product::<usize>()
 }
 
 #[cfg(not(tarpaulin_include))]
